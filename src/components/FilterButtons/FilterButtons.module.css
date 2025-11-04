@@ -10,7 +10,7 @@
 .filterButtons button {
   background: #fff;
   color: #333;
-  border: 2px solid #667eea;
+  border: 2px solid #DA001E;
   padding: 0.5rem 1rem;
   cursor: pointer;
   border-radius: 20px;
@@ -20,14 +20,14 @@
 }
 
 .filterButtons button:hover {
-  background: #667eea;
+  background: linear-gradient(45deg, #DA001E, #FFCD00);
   color: white;
   transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .filterButtons button.active {
-  background: #667eea;
+  background: linear-gradient(45deg, #DA001E, #FFCD00);
   color: white;
-  box-shadow: 0 0 15px rgba(102, 126, 234, 0.5);
+  box-shadow: 0 0 15px rgba(218, 0, 30, 0.5);
 }

@@ -27,8 +27,8 @@
 }
 
 .tabs button.active {
-  background: #ffd700;
+  background: #FFCD00;
   color: #333;
-  border-color: #ffd700;
-  box-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
+  border-color: #FFCD00;
+  box-shadow: 0 0 15px rgba(255, 205, 0, 0.5);
 }

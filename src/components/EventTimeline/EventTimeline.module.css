@@ -9,7 +9,7 @@
 }
 
 .timelineArrow {
-  background: linear-gradient(45deg, #667eea, #764ba2);
+  background: linear-gradient(45deg, #DA001E, #FFCD00);
   color: white;
   border: none;
   border-radius: 50%;
@@ -70,13 +70,13 @@
 
 .timelineItem:hover {
   transform: translateY(-5px);
-  border-color: #667eea;
+  border-color: #DA001E;
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
 }
 
 .timelineYear {
   font-weight: bold;
-  color: #667eea;
+  color: #DA001E;
   margin-bottom: 1rem;
   font-size: 1.1rem;
 }
@@ -116,7 +116,7 @@
   top: 0;
   left: 0;
   height: 100%;
-  background: linear-gradient(90deg, #667eea, #764ba2);
+  background: linear-gradient(90deg, #DA001E, #FFCD00);
   border-radius: 3px;
   transition: width 0.5s ease-in-out;
   z-index: 0;
@@ -164,9 +164,9 @@
 }
 
 .timelineMilestone.active::before {
-  background: #667eea;
+  background: #DA001E;
   transform: scale(1.3);
-  box-shadow: 0 0 15px rgba(102, 126, 234, 0.7);
+  box-shadow: 0 0 15px rgba(218, 0, 30, 0.7);
 }
 
 .milestoneLabel {
@@ -181,7 +181,7 @@
 }
 
 .timelineMilestone.active .milestoneLabel {
-  color: #667eea;
+  color: #DA001E;
   font-weight: bold;
 }
 

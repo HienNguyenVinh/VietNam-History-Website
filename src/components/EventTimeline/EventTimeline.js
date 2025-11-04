@@ -1,5 +1,5 @@
 import React, { useRef, useEffect } from 'react';
-import { getFirstTwoSentences } from '../utils/getFirstTwoSentences';
+import { getFirstTwoSentences } from '../../utils/getFirstTwoSentences';
 import styles from './EventTimeline.module.css';
 
 const EventTimeline = ({ events, timelineIndex, selectedEvent, onPrevEvents, onNextEvents, onSelectEvent, onCloseEventDetail, setTimelineIndex }) => {
