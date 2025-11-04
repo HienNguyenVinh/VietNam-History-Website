@@ -1,0 +1,33 @@
+/* Filter Buttons */
+.filterButtons {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+
+.filterButtons button {
+  background: #fff;
+  color: #333;
+  border: 2px solid #667eea;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.filterButtons button:hover {
+  background: #667eea;
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.filterButtons button.active {
+  background: #667eea;
+  color: white;
+  box-shadow: 0 0 15px rgba(102, 126, 234, 0.5);
+}
