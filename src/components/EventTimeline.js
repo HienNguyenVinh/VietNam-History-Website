@@ -1,8 +1,23 @@
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 import { getFirstTwoSentences } from '../utils/getFirstTwoSentences';
 import styles from './EventTimeline.module.css';
 
 const EventTimeline = ({ events, timelineIndex, selectedEvent, onPrevEvents, onNextEvents, onSelectEvent, onCloseEventDetail, setTimelineIndex }) => {
+  const milestonesRef = useRef(null);
+
+  useEffect(() => {
+    if (milestonesRef.current) {
+      const activeMilestone = milestonesRef.current.children[timelineIndex];
+      if (activeMilestone) {
+        activeMilestone.scrollIntoView({
+          behavior: 'smooth',
+          block: 'nearest',
+          inline: 'center',
+        });
+      }
+    }
+  }, [timelineIndex]);
+
   return (
     <>
       <div className={styles.timelineContainer}>
@@ -24,7 +39,7 @@ const EventTimeline = ({ events, timelineIndex, selectedEvent, onPrevEvents, onN
               }}
             ></div>
 
-            <div className={styles.timelineMilestones}>
+            <div className={styles.timelineMilestones} ref={milestonesRef}>
               {events.map((event, index) => (
                 <div
                   key={index}

@@ -133,6 +133,13 @@
   align-items: flex-start;
   transform: translateY(-50%);
   z-index: 1;
+  overflow-x: auto;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+}
+
+.timelineMilestones::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, and Opera */
 }
 
 .timelineMilestone {
@@ -142,6 +149,8 @@
   align-items: center;
   cursor: pointer;
   transition: all 0.3s ease;
+  min-width: 100px;
+  flex-shrink: 0;
 }
 
 .timelineMilestone::before {
