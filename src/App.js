@@ -12,7 +12,7 @@ import { useEvents } from './hooks/useEvents';
 import { useNhanVat } from './hooks/useNhanVat';
 
 function App() {
-  const [activeTab, setActiveTab] = useState('video');
+  const [activeTab, setActiveTab] = useState('trang-chu');
 
   const videosHook = useVideos();
   const eventsHook = useEvents();

@@ -7,7 +7,8 @@
 
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background: linear-gradient(135deg, #fff5f5 0%, #ffeaa7 100%);
+  background: url('./images/Gemini_Generated_Image_t64ohst64ohst64o.png') no-repeat center center fixed;
+  background-size: cover;
   color: #333;
   line-height: 1.6;
 }
