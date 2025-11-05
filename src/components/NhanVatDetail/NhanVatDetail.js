@@ -5,12 +5,12 @@ import styles from './NhanVatDetail.module.css';
 
 const NhanVatDetail = () => {
   const { id } = useParams();
-  const { nhanVat, loading, error } = useNhanVat();
+  const { fullNhanVat, loading, error } = useNhanVat();
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
 
-  const selectedNhanVat = nhanVat.find(nv => nv.id === String(id));
+  const selectedNhanVat = fullNhanVat.find(nv => nv.id === String(id));
 
   if (!selectedNhanVat) return <div>Nhan Vat not found</div>;
 

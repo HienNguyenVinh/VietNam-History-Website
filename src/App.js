@@ -8,6 +8,7 @@ import EventTimeline from './components/EventTimeline/EventTimeline';
 import NhanVatGrid from './components/NhanVatGrid/NhanVatGrid';
 import NhanVatDetail from './components/NhanVatDetail/NhanVatDetail';
 import Pagination from './components/Pagination/Pagination';
+import YearRangeFilter from './components/YearRangeFilter/YearRangeFilter';
 import { useVideos } from './hooks/useVideos';
 import { useEvents } from './hooks/useEvents';
 import { useNhanVat } from './hooks/useNhanVat';
@@ -17,6 +18,7 @@ function App() {
   const videosHook = useVideos();
   const eventsHook = useEvents();
   const nhanVatHook = useNhanVat();
+  const fullNhanVat = nhanVatHook.fullNhanVat;
 
   if (videosHook.loading || eventsHook.loading || nhanVatHook.loading) return <div className="App">Loading...</div>;
   if (videosHook.error || eventsHook.error || nhanVatHook.error) return <div className="App">Error: {videosHook.error || eventsHook.error || nhanVatHook.error}</div>;
@@ -66,6 +68,21 @@ function App() {
           } />
           <Route path="/nhan-vat" element={
             <>
+              <SearchBar
+                searchTerm={nhanVatHook.searchTerm}
+                showSuggestions={nhanVatHook.showSuggestions}
+                suggestions={nhanVatHook.suggestions}
+                onSearchChange={nhanVatHook.handleSearchChange}
+                onSelectSuggestion={nhanVatHook.selectSuggestion}
+              />
+              <YearRangeFilter
+                startYear={nhanVatHook.startYear}
+                endYear={nhanVatHook.endYear}
+                minYear={0}
+                maxYear={2023}
+                onStartYearChange={nhanVatHook.handleStartYearChange}
+                onEndYearChange={nhanVatHook.handleEndYearChange}
+              />
               <NhanVatGrid nhanVat={nhanVatHook.nhanVat} />
               <Pagination
                 currentPage={nhanVatHook.currentPage}

@@ -13,13 +13,13 @@ const SearchBar = ({ searchTerm, showSuggestions, suggestions, onSearchChange, o
       />
       {showSuggestions && suggestions.length > 0 && (
         <div className={styles.suggestionsDropdown}>
-          {suggestions.map((video) => (
+          {suggestions.map((item) => (
             <div
-              key={video.id}
+              key={item.id}
               className={styles.suggestionItem}
-              onClick={() => onSelectSuggestion(video.name)}
+              onClick={() => onSelectSuggestion(item.name)}
             >
-              {video.name}
+              {item.name}
             </div>
           ))}
         </div>

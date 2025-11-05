@@ -3,13 +3,18 @@
   margin: 0 auto;
   padding: 20px;
   text-align: center;
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
 }
 
 .backLink {
-  display: inline-block;
-  margin-bottom: 20px;
+  position: absolute;
+  top: 20px;
+  left: 20px;
   color: #007bff;
   text-decoration: none;
+  font-weight: bold;
 }
 
 .backLink:hover {
@@ -20,6 +25,8 @@
   max-width: 100%;
   height: auto;
   margin-bottom: 20px;
+  border-radius: 15px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
 }
 
 .nhanVatDetail h1 {
