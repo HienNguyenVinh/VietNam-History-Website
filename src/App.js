@@ -1,32 +1,22 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { Routes, Route, Link, useLocation } from 'react-router-dom';
 import './App.css';
-import Tabs from './components/Tabs/Tabs';
 import SearchBar from './components/SearchBar/SearchBar';
 import FilterButtons from './components/FilterButtons/FilterButtons';
 import VideoList from './components/VideoList/VideoList';
 import EventTimeline from './components/EventTimeline/EventTimeline';
 import NhanVatGrid from './components/NhanVatGrid/NhanVatGrid';
+import NhanVatDetail from './components/NhanVatDetail/NhanVatDetail';
 import Pagination from './components/Pagination/Pagination';
 import { useVideos } from './hooks/useVideos';
 import { useEvents } from './hooks/useEvents';
 import { useNhanVat } from './hooks/useNhanVat';
 
 function App() {
-  const [activeTab, setActiveTab] = useState('trang-chu');
-
+  const location = useLocation();
   const videosHook = useVideos();
   const eventsHook = useEvents();
   const nhanVatHook = useNhanVat();
-
-  const handleTabChange = (tab) => {
-    setActiveTab(tab);
-    videosHook.setCurrentPage(1);
-    videosHook.setSearchTerm('');
-    videosHook.setShowSuggestions(false);
-    eventsHook.setTimelineIndex(0);
-    eventsHook.setSelectedEvent(null);
-    nhanVatHook.setCurrentPage(1);
-  };
 
   if (videosHook.loading || eventsHook.loading || nhanVatHook.loading) return <div className="App">Loading...</div>;
   if (videosHook.error || eventsHook.error || nhanVatHook.error) return <div className="App">Error: {videosHook.error || eventsHook.error || nhanVatHook.error}</div>;
@@ -34,56 +24,59 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <h1>Học lịch sử</h1>
-        <Tabs activeTab={activeTab} onTabChange={handleTabChange} />
-        {activeTab === 'video' && (
-          <>
-            <SearchBar
-              searchTerm={videosHook.searchTerm}
-              showSuggestions={videosHook.showSuggestions}
-              suggestions={videosHook.suggestions}
-              onSearchChange={videosHook.handleSearchChange}
-              onSelectSuggestion={videosHook.selectSuggestion}
-            />
-            <FilterButtons filter={videosHook.filter} onFilterChange={videosHook.handleFilterChange} />
-          </>
-        )}
+        <h1><Link to="/" style={{ textDecoration: 'none', color: 'inherit' }}>Học lịch sử</Link></h1>
+        <nav className="navLinks">
+          <Link to="/" className={location.pathname === '/' ? 'active' : ''}>Trang chủ</Link>
+          <Link to="/video" className={location.pathname === '/video' ? 'active' : ''}>Video</Link>
+          <Link to="/nhan-vat" className={location.pathname.startsWith('/nhan-vat') ? 'active' : ''}>Nhân vật</Link>
+        </nav>
       </header>
       <main>
-        {activeTab === 'video' && (
-          <>
-            <VideoList videos={videosHook.videos} />
-            <Pagination
-              currentPage={videosHook.currentPage}
-              totalPages={videosHook.totalPages}
-              onPrevPage={videosHook.prevPage}
-              onNextPage={videosHook.nextPage}
+        <Routes>
+          <Route path="/" element={
+            <EventTimeline
+              events={eventsHook.events}
+              timelineIndex={eventsHook.timelineIndex}
+              selectedEvent={eventsHook.selectedEvent}
+              onPrevEvents={eventsHook.prevEvents}
+              onNextEvents={eventsHook.nextEvents}
+              onSelectEvent={eventsHook.selectEvent}
+              onCloseEventDetail={eventsHook.closeEventDetail}
+              setTimelineIndex={eventsHook.setTimelineIndex}
             />
-          </>
-        )}
-        {activeTab === 'trang-chu' && (
-          <EventTimeline
-            events={eventsHook.events}
-            timelineIndex={eventsHook.timelineIndex}
-            selectedEvent={eventsHook.selectedEvent}
-            onPrevEvents={eventsHook.prevEvents}
-            onNextEvents={eventsHook.nextEvents}
-            onSelectEvent={eventsHook.selectEvent}
-            onCloseEventDetail={eventsHook.closeEventDetail}
-            setTimelineIndex={eventsHook.setTimelineIndex}
-          />
-        )}
-        {activeTab === 'nhan-vat' && (
-          <>
-            <NhanVatGrid nhanVat={nhanVatHook.nhanVat} />
-            <Pagination
-              currentPage={nhanVatHook.currentPage}
-              totalPages={nhanVatHook.totalNhanVatPages}
-              onPrevPage={nhanVatHook.prevPage}
-              onNextPage={nhanVatHook.nextPage}
-            />
-          </>
-        )}
+          } />
+          <Route path="/video" element={
+            <>
+              <SearchBar
+                searchTerm={videosHook.searchTerm}
+                showSuggestions={videosHook.showSuggestions}
+                suggestions={videosHook.suggestions}
+                onSearchChange={videosHook.handleSearchChange}
+                onSelectSuggestion={videosHook.selectSuggestion}
+              />
+              <FilterButtons filter={videosHook.filter} onFilterChange={videosHook.handleFilterChange} />
+              <VideoList videos={videosHook.videos} />
+              <Pagination
+                currentPage={videosHook.currentPage}
+                totalPages={videosHook.totalPages}
+                onPrevPage={videosHook.prevPage}
+                onNextPage={videosHook.nextPage}
+              />
+            </>
+          } />
+          <Route path="/nhan-vat" element={
+            <>
+              <NhanVatGrid nhanVat={nhanVatHook.nhanVat} />
+              <Pagination
+                currentPage={nhanVatHook.currentPage}
+                totalPages={nhanVatHook.totalNhanVatPages}
+                onPrevPage={nhanVatHook.prevPage}
+                onNextPage={nhanVatHook.nextPage}
+              />
+            </>
+          } />
+          <Route path="/nhan-vat/:id" element={<NhanVatDetail />} />
+        </Routes>
       </main>
     </div>
   );

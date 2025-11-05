@@ -178,11 +178,13 @@
   max-width: 90px;
   overflow: hidden;
   text-overflow: ellipsis;
+  text-shadow: -1px -1px 0 white, 1px -1px 0 white, -1px 1px 0 white, 1px 1px 0 white;
 }
 
 .timelineMilestone.active .milestoneLabel {
   color: #DA001E;
   font-weight: bold;
+  
 }
 
 /* Event Detail Modal */

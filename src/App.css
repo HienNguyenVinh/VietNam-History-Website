@@ -23,15 +23,53 @@ body {
 .App-header {
   background: linear-gradient(135deg, #DA001E 0%, #FFCD00 100%);
   color: white;
-  padding: 1.5rem 1rem;
+  padding: 0.75rem 0.5rem;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   text-align: center;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
 }
 
 .App-header h1 {
-  font-size: 2.5rem;
-  margin-bottom: 1rem;
+  font-size: 1.25rem;
+  margin-bottom: 0.5rem;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* Navigation Links */
+.navLinks {
+  display: flex;
+  justify-content: center;
+  gap: 0.25rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.navLinks a {
+  background: #fff;
+  color: #333;
+  border: 2px solid #DA001E;
+  padding: 0.25rem 0.5rem;
+  cursor: pointer;
+  border-radius: 20px;
+  font-size: 0.45rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  text-decoration: none;
+}
+
+.navLinks a:hover {
+  background: linear-gradient(45deg, #DA001E, #FFCD00);
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.navLinks a.active {
+  background: linear-gradient(45deg, #DA001E, #FFCD00);
+  color: white;
+  box-shadow: 0 0 15px rgba(218, 0, 30, 0.5);
 }
 
 /* Main Content */
@@ -58,6 +96,11 @@ main {
   .App-header h1 {
     font-size: 2rem;
   }
+
+  .navLinks a {
+    font-size: 0.5rem;
+    padding: 0.3rem 0.6rem;
+  }
 }
 
 @media (max-width: 480px) {
@@ -67,5 +110,15 @@ main {
 
   .App-header h1 {
     font-size: 1.5rem;
+  }
+
+  .navLinks {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .navLinks a {
+    font-size: 0.6rem;
+    padding: 0.5rem 1rem;
   }
 }

@@ -52,7 +52,7 @@ app.get('/api/events', async (req, res) => {
 // Route to fetch all nhan_vat
 app.get('/api/nhan_vat', async (req, res) => {
   try {
-    const result = await pool.query('SELECT * FROM nhan_vat');
+    const result = await pool.query("SELECT * FROM nhan_vat WHERE birth_year != 'N/A' OR death_year != 'N/A'");
     res.json(result.rows);
   } catch (err) {
     console.error('Error fetching nhan_vat:', err);
