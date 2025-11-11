@@ -36,7 +36,7 @@ export const useNhanVat = () => {
     const birthYear = parseInt(nv.birth_year) || 4000;
     const deathYear = parseInt(nv.death_year) || 4000;
     const matchesYear = (birthYear >= startYear && birthYear <= endYear) ||
-                        (deathYear >= startYear && deathYear <= endYear) 
+                        (deathYear >= startYear && deathYear <= endYear)
                         ;
     return matchesSearch && matchesYear;
   });
