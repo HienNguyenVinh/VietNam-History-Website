@@ -1,12 +1,27 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import styles from './SearchBar.module.css';
 
-const SearchBar = ({ searchTerm, showSuggestions, suggestions, onSearchChange, onSelectSuggestion }) => {
+const SearchBar = ({ searchTerm, showSuggestions, suggestions, onSearchChange, onSelectSuggestion, onHideSuggestions }) => {
+  const dropdownRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        onHideSuggestions();
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [onHideSuggestions]);
+
   return (
-    <div className={styles.searchContainer}>
+    <div className={styles.searchContainer} ref={dropdownRef}>
       <input
         type="text"
-        placeholder="Search videos by title..."
+        placeholder="Search characters by name..."
         value={searchTerm}
         onChange={onSearchChange}
         className={styles.searchInput}

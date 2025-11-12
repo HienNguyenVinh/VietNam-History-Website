@@ -77,6 +77,10 @@ export const useVideos = () => {
     setCurrentPage(1);
   };
 
+  const hideSuggestions = () => {
+    setShowSuggestions(false);
+  };
+
   return {
     videos: currentVideos,
     loading,
@@ -95,5 +99,6 @@ export const useVideos = () => {
     handleFilterChange,
     handleSearchChange,
     selectSuggestion,
+    hideSuggestions,
   };
 };

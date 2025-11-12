@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import * as characterTitles from '../data/characterTitles';
 
 export const useNhanVat = () => {
   const [nhanVat, setNhanVat] = useState([]);
@@ -9,6 +10,7 @@ export const useNhanVat = () => {
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [startYear, setStartYear] = useState(0);
   const [endYear, setEndYear] = useState(2023);
+  const [selectedTitle, setSelectedTitle] = useState('');
   const nhanVatPerPage = 12;
 
   useEffect(() => {
@@ -30,15 +32,15 @@ export const useNhanVat = () => {
     }
   };
 
-  // Filter nhan_vat based on search term and year range
+  // Filter nhan_vat based on search term, year range, and title
   const filteredNhanVat = nhanVat.filter((nv) => {
     const matchesSearch = nv.name.toLowerCase().includes(searchTerm.toLowerCase());
     const birthYear = parseInt(nv.birth_year) || 4000;
     const deathYear = parseInt(nv.death_year) || 4000;
     const matchesYear = (birthYear >= startYear && birthYear <= endYear) ||
-                        (deathYear >= startYear && deathYear <= endYear)
-                        ;
-    return matchesSearch && matchesYear;
+                        (deathYear >= startYear && deathYear <= endYear);
+    const matchesTitle = selectedTitle ? characterTitles[selectedTitle]?.includes(nv.name) : true;
+    return matchesSearch && matchesYear && matchesTitle;
   });
 
   const suggestions = searchTerm
@@ -87,6 +89,17 @@ export const useNhanVat = () => {
     setCurrentPage(1);
   };
 
+  const handleTitleChange = (title) => {
+    setSelectedTitle(title);
+    setCurrentPage(1);
+  };
+
+  const titles = Object.keys(characterTitles);
+
+  const hideSuggestions = () => {
+    setShowSuggestions(false);
+  };
+
   return {
     nhanVat: currentNhanVat,
     fullNhanVat: nhanVat,
@@ -108,5 +121,9 @@ export const useNhanVat = () => {
     endYear,
     handleStartYearChange,
     handleEndYearChange,
+    selectedTitle,
+    handleTitleChange,
+    titles,
+    hideSuggestions,
   };
 };
