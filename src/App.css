@@ -25,24 +25,25 @@ body {
   color: white;
   padding: 0.75rem 0.5rem;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  text-align: center;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
   position: sticky;
   top: 0;
   z-index: 1000;
 }
 
 .App-header h1 {
-  font-size: 1.25rem;
-  margin-bottom: 0.5rem;
+  font-size: 1.5rem;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+  margin: 0;
 }
 
 /* Navigation Links */
 .navLinks {
   display: flex;
-  justify-content: center;
-  gap: 0.25rem;
-  margin-bottom: 1rem;
+  gap: 0.5rem;
   flex-wrap: wrap;
 }
 
@@ -50,10 +51,10 @@ body {
   background: #fff;
   color: #333;
   border: 2px solid #DA001E;
-  padding: 0.25rem 0.5rem;
+  padding: 0.5rem 1rem;
   cursor: pointer;
   border-radius: 20px;
-  font-size: 0.45rem;
+  font-size: 1rem;
   font-weight: 500;
   transition: all 0.3s ease;
   text-decoration: none;
@@ -90,7 +91,6 @@ main {
   font-size: 1.2rem;
   font-weight: 600;
 }
-
 /* Responsive Design */
 @media (max-width: 768px) {
   .App-header h1 {
@@ -102,7 +102,14 @@ main {
     padding: 0.3rem 0.6rem;
   }
 }
-
+.nhanVatHeader {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
 @media (max-width: 480px) {
   .App-header {
     padding: 1rem 0.5rem;

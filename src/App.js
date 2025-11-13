@@ -70,21 +70,22 @@ function App() {
           } />
           <Route path="/nhan-vat" element={
             <>
-              <div style={{ display: 'flex', alignItems: 'center', marginBottom: '5px' }}>
-                <SearchBar
-                  searchTerm={nhanVatHook.searchTerm}
-                  showSuggestions={nhanVatHook.showSuggestions}
-                  suggestions={nhanVatHook.suggestions}
-                  onSearchChange={nhanVatHook.handleSearchChange}
-                  onSelectSuggestion={nhanVatHook.selectSuggestion}
-                  onHideSuggestions={nhanVatHook.hideSuggestions}
-                />
-                <TitleFilter
-                  selectedTitle={nhanVatHook.selectedTitle}
-                  onTitleChange={nhanVatHook.handleTitleChange}
-                  titles={nhanVatHook.titles}
-                />
-              </div>
+              <div className="nhanVatHeader">
+    <SearchBar
+      searchTerm={nhanVatHook.searchTerm}
+      showSuggestions={nhanVatHook.showSuggestions}
+      suggestions={nhanVatHook.suggestions}
+      onSearchChange={nhanVatHook.handleSearchChange}
+      onSelectSuggestion={nhanVatHook.selectSuggestion}
+      onHideSuggestions={nhanVatHook.hideSuggestions}
+    />
+    <TitleFilter
+      selectedTitle={nhanVatHook.selectedTitle}
+      onTitleChange={nhanVatHook.handleTitleChange}
+      titles={nhanVatHook.titles}
+    />
+</div>
+
               <YearRangeFilter
                 startYear={nhanVatHook.startYear}
                 endYear={nhanVatHook.endYear}
