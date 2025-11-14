@@ -58,12 +58,14 @@ export const useNhanVat = () => {
   const nextPage = () => {
     if (currentPage < totalNhanVatPages) {
       setCurrentPage(currentPage + 1);
+      window.scrollTo(0, 0)
     }
   };
 
   const prevPage = () => {
     if (currentPage > 1) {
       setCurrentPage(currentPage - 1);
+      window.scrollTo(0, 0)
     }
   };
 

@@ -7,7 +7,6 @@ const NhanVatGrid = ({ nhanVat }) => {
     <div className={styles.nhanVatGrid}>
       {nhanVat.map((nv) => (
         <Link key={nv.id} to={`/nhan-vat/${nv.id}`} className={styles.nhanVatItem}>
-          <img src={nv.image} alt={nv.name} />
           <h3>{nv.name}</h3>
           <h5>{nv.birth_year} - {nv.death_year}</h5>
           <p>{getFirstTwoSentences(nv.description)}</p>

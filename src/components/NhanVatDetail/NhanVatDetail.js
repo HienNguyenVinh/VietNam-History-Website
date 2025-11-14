@@ -17,7 +17,6 @@ const NhanVatDetail = () => {
   return (
     <div className={styles.nhanVatDetail}>
       <Link to="/nhan-vat" className={styles.backLink}>← Back to Nhan Vat</Link>
-      <img src={selectedNhanVat.image} alt={selectedNhanVat.name} />
       <h1>{selectedNhanVat.name}</h1>
       <h3>{selectedNhanVat.birth_year} - {selectedNhanVat.death_year}</h3>
       <p>{selectedNhanVat.description}</p>

@@ -4,7 +4,6 @@ import styles from './EventTimeline.module.css';
 
 const EventTimeline = ({ events, timelineIndex, selectedEvent, onPrevEvents, onNextEvents, onSelectEvent, onCloseEventDetail, setTimelineIndex }) => {
   const milestonesRef = useRef(null);
-
   useEffect(() => {
     if (milestonesRef.current) {
       const activeMilestone = milestonesRef.current.children[timelineIndex];
@@ -17,7 +16,6 @@ const EventTimeline = ({ events, timelineIndex, selectedEvent, onPrevEvents, onN
       }
     }
   }, [timelineIndex]);
-
   return (
     <>
       <div className={styles.timelineContainer}>
@@ -99,7 +97,7 @@ const EventTimeline = ({ events, timelineIndex, selectedEvent, onPrevEvents, onN
             <p>{selectedEvent.description}</p>
           </div>
         </div>
-      )}
+      )}      
     </>
   );
 };

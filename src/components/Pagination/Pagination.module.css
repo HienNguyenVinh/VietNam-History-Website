@@ -33,7 +33,13 @@
 }
 
 .pagination span {
-  font-weight: 600;
-  color: #333;
+  font-weight: 600;  
+  color: #fcf8f8;
   font-size: 1rem;
+  text-shadow:
+    -1px -1px 0 #0f0103,
+     1px -1px 0 #0a0102,
+    -1px  1px 0 #0e0103,
+     1px  1px 0 #140103;
+
 }
