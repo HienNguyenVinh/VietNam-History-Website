@@ -1,5 +1,5 @@
 .titleFilterContainer {
-  margin-bottom: 10px; /* Default spacing for smaller screens */
+
 }
 
 .titleSelect {
@@ -31,4 +31,13 @@
 .titleSelect:focus {
   outline: none;
   border-color: #DA001E;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .titleSelect {
+    max-width: 120px;
+    font-size: 12px;
+    padding: 6px 8px;
+  }
 }

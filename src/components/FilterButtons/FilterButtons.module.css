@@ -3,7 +3,6 @@
   display: flex;
   justify-content: center;
   gap: 0.5rem;
-  margin-bottom: 1rem;
   flex-wrap: wrap;
 }
 
@@ -30,4 +29,17 @@
   background: linear-gradient(45deg, #DA001E, #FFCD00);
   color: white;
   box-shadow: 0 0 15px rgba(218, 0, 30, 0.5);
+}
+
+/* Responsive */
+@media (max-width: 878px) {
+  .filterButtons button {
+    padding: 0.3rem 0.5rem;
+    font-size: 0.8rem;
+  }
+}
+@media (max-width: 700px) {
+  .filterButtons button {
+    flex: 1 1 auto; /* Allows buttons to shrink and wrap */
+  }
 }

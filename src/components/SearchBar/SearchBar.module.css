@@ -2,7 +2,7 @@
 .searchContainer {
   position: relative;
   max-width: 400px;
-  margin: 0 auto 0.75rem;
+  flex: 1
 }
 
 .searchInput {
@@ -51,4 +51,11 @@
 
 .suggestionItem:last-child {
   border-bottom: none;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .searchContainer {
+    max-width: 150px;
+  }
 }

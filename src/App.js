@@ -50,15 +50,17 @@ function App() {
           } />
           <Route path="/video" element={
             <>
-              <SearchBar
-                searchTerm={videosHook.searchTerm}
-                showSuggestions={videosHook.showSuggestions}
-                suggestions={videosHook.suggestions}
-                onSearchChange={videosHook.handleSearchChange}
-                onSelectSuggestion={videosHook.selectSuggestion}
-                onHideSuggestions={videosHook.hideSuggestions}
-              />
-              <FilterButtons filter={videosHook.filter} onFilterChange={videosHook.handleFilterChange} />
+              <div className="videoHeader">
+                <SearchBar
+                  searchTerm={videosHook.searchTerm}
+                  showSuggestions={videosHook.showSuggestions}
+                  suggestions={videosHook.suggestions}
+                  onSearchChange={videosHook.handleSearchChange}
+                  onSelectSuggestion={videosHook.selectSuggestion}
+                  onHideSuggestions={videosHook.hideSuggestions}
+                />
+                <FilterButtons filter={videosHook.filter} onFilterChange={videosHook.handleFilterChange} />
+              </div>
               <VideoList videos={videosHook.videos} />
               <Pagination
                 currentPage={videosHook.currentPage}
