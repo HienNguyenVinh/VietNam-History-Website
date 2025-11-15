@@ -13,6 +13,7 @@ import TitleFilter from './components/TitleFilter/TitleFilter';
 import { useVideos } from './hooks/useVideos';
 import { useEvents } from './hooks/useEvents';
 import { useNhanVat } from './hooks/useNhanVat';
+import ChatPage from './components/Chat/ChatPage';
 
 function App() {
   const location = useLocation();
@@ -31,6 +32,7 @@ function App() {
         <nav className="navLinks">
           <Link to="/" className={location.pathname === '/' ? 'active' : ''}>Trang chủ</Link>
           <Link to="/video" className={location.pathname === '/video' ? 'active' : ''}>Video</Link>
+          <Link to="/chat" className={location.pathname === '/chat' ? 'active' : ''}>Chat</Link>
           <Link to="/nhan-vat" className={location.pathname.startsWith('/nhan-vat') ? 'active' : ''}>Nhân vật</Link>
         </nav>
       </header>
@@ -70,23 +72,24 @@ function App() {
               />
             </>
           } />
+          <Route path="/chat" element={<ChatPage />} />
           <Route path="/nhan-vat" element={
             <>
               <div className="nhanVatHeader">
-    <SearchBar
-      searchTerm={nhanVatHook.searchTerm}
-      showSuggestions={nhanVatHook.showSuggestions}
-      suggestions={nhanVatHook.suggestions}
-      onSearchChange={nhanVatHook.handleSearchChange}
-      onSelectSuggestion={nhanVatHook.selectSuggestion}
-      onHideSuggestions={nhanVatHook.hideSuggestions}
-    />
-    <TitleFilter
-      selectedTitle={nhanVatHook.selectedTitle}
-      onTitleChange={nhanVatHook.handleTitleChange}
-      titles={nhanVatHook.titles}
-    />
-</div>
+                <SearchBar
+                  searchTerm={nhanVatHook.searchTerm}
+                  showSuggestions={nhanVatHook.showSuggestions}
+                  suggestions={nhanVatHook.suggestions}
+                  onSearchChange={nhanVatHook.handleSearchChange}
+                  onSelectSuggestion={nhanVatHook.selectSuggestion}
+                  onHideSuggestions={nhanVatHook.hideSuggestions}
+                />
+                <TitleFilter
+                  selectedTitle={nhanVatHook.selectedTitle}
+                  onTitleChange={nhanVatHook.handleTitleChange}
+                  titles={nhanVatHook.titles}
+                />
+              </div>
 
               <YearRangeFilter
                 startYear={nhanVatHook.startYear}
