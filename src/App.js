@@ -30,7 +30,7 @@ function App() {
       <header className="App-header">
         <h1><Link to="/" style={{ textDecoration: 'none', color: 'inherit' }}>Học lịch sử</Link></h1>
         <nav className="navLinks">
-          <Link to="/" className={location.pathname === '/' ? 'active' : ''}>Trang chủ</Link>
+          <Link to="/" className={location.pathname === '/' ? 'active' : ''}>Dòng Thời Gian</Link>
           <Link to="/video" className={location.pathname === '/video' ? 'active' : ''}>Video</Link>
           <Link to="/chat" className={location.pathname === '/chat' ? 'active' : ''}>Chat</Link>
           <Link to="/nhan-vat" className={location.pathname.startsWith('/nhan-vat') ? 'active' : ''}>Nhân vật</Link>

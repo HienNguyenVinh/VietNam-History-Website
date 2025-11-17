@@ -9,10 +9,10 @@ const TitleFilter = ({ selectedTitle, onTitleChange, titles }) => {
         onChange={(e) => onTitleChange(e.target.value)}
         className={styles.titleSelect}
       >
-        <option value="">All Titles</option>
+        <option value="">Tất cả</option>
         {titles.map((title) => (
           <option key={title} value={title}>
-            {title.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}
+            {title.replaceAll('_', ' ')}
           </option>
         ))}
       </select>

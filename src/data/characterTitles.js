@@ -1,5 +1,5 @@
 // Character titles data
-export const anhHungDanToc = [
+export const Anh_Hùng_Dân_Tộc = [
   "Bà Triệu",
   "Đinh Bộ Lĩnh",
   "Hai Bà Trưng",
@@ -18,8 +18,7 @@ export const anhHungDanToc = [
   "Trần Hưng Đạo",
   "Trần Nhân Tông"
 ];
-
-export const vuaChua = [
+export const Vua_Chúa = [
   "Bảo Đại",
   "Chu Nguyên Chương",
   "Dục Đức",
@@ -170,8 +169,7 @@ export const vuaChua = [
   "Lê Ngọa Triều",
   "Triệu Hằng"
 ];
-
-export const quan = [
+export const Quan = [
   "Bùi Cầm Hổ",
   "Bùi Dương Lịch",
   "Bùi Mộc Đạc",
@@ -361,8 +359,7 @@ export const quan = [
   "Ngô Nguyên Tế",
   "Trần Thúc Nhẫn"
 ];
-
-export const danhNhanChiSi = [
+export const Danh_Nhân_Chí_Sĩ = [
   "Bùi Huy Bích",
   "Đào Tấn",
   "Hồ Chí Minh",
@@ -410,8 +407,7 @@ export const danhNhanChiSi = [
   "Vũ Như Tô",
   "Vương Hồng Sển"
 ];
-
-export const nhaGiaoNhoPhat = [
+export const Nhà_Giáo_Nho_Phật = [
   "Bùi Kỷ",
   "Bùi Thức Kiên",
   "Chu Văn An",
@@ -442,8 +438,7 @@ export const nhaGiaoNhoPhat = [
   "Lê Văn Hảo",
   "Lê Văn Thịnh"
 ];
-
-export const nhaThoVanSuDia = [
+export const Nhà_Thơ_Văn_Sử_Địa = [
   "Bùi Minh Quốc",
   "Đặng Dung",
   "Dương Thu Hương",
@@ -541,8 +536,7 @@ export const nhaThoVanSuDia = [
   "Phan Đình Phùng",
   "Lý Bạch"
 ];
-
-export const tuong = [
+export const Tướng = [
   "Bùi Nam Hà",
   "Bùi Tá Hán",
   "Bùi Thế Đạt",
@@ -712,8 +706,7 @@ export const tuong = [
   "Phạm Bạch Hổ",
   "Phạm Phòng Át"
 ];
-
-export const nguoiLinhAnhHungLaoDongVuTrang = [
+export const Người_Lính_Anh_Hùng_Lao_Động_Vũ_Trang = [
   "Bùi Quang Thận",
   "Hoàng Hanh",
   "Ngô Gia Khảm",
@@ -729,8 +722,7 @@ export const nguoiLinhAnhHungLaoDongVuTrang = [
   "Trần Văn Phương",
   "Vũ Xuân Thiều"
 ];
-
-export const tienSiTrangNguyenThamHoa = [
+export const Tiến_Sĩ_Trang_Nguyên_Thám_Hoa = [
   "Bùi Quốc Khái",
   "Dương Phúc Tư",
   "Đặng Ma La",
@@ -784,8 +776,7 @@ export const tienSiTrangNguyenThamHoa = [
   "Ngô Miễn Thiệu",
   "Lê Văn Hảo"
 ];
-
-export const hoangHauHoangTu = [
+export const Hoàng_Hậu_Hoàng_Tử = [
   "Bùi Thị Nhạn",
   "Dương Vân Nga",
   "Lê Khắc Xương",
@@ -814,8 +805,7 @@ export const hoangHauHoangTu = [
   "Trần Quốc Khang",
   "Trần Thị Tùng"
 ];
-
-export const daiTaTrungTa = [
+export const Đại_Tá_Trung_Tá = [
   "Bùi Tín",
   "Đặng Văn Việt",
   "Hoàng Đạo Thuý",
@@ -826,8 +816,7 @@ export const daiTaTrungTa = [
   "Phạm Phú Quốc",
   "Trần Đình Xu"
 ];
-
-export const hoaSiNhacSiDaoDien = [
+export const Họa_Sĩ_Nhạc_Sĩ_Đạo_Diễn = [
   "Bùi Trang Chước",
   "Đỗ Lễ",
   "Đặng Nhật Minh",
@@ -862,8 +851,7 @@ export const hoaSiNhacSiDaoDien = [
   "Hoàng Dũng",
   "Võ Văn Tường"
 ];
-
-export const chuTichThuTruongTongBiThu = [
+export const Chủ_Tịch_Thủ_Tướng_Tổng_Bí_Thư = [
   "Bùi Văn Cường",
   "Bùi Văn Nghiêm",
   "Dương Minh Châu",
@@ -914,8 +902,7 @@ export const chuTichThuTruongTongBiThu = [
   "Võ Chí Công",
   "Võ Văn Kiệt"
 ];
-
-export const chinhTriGiaChinhKhach = [
+export const Chính_Trị_Gia_Chính_Khách = [
   "Bùi Diễm",
   "Bùi Văn Phương",
   "Châu Văn Liêm",
@@ -1045,8 +1032,7 @@ export const chinhTriGiaChinhKhach = [
   "Lê Khả Phiêu",
   "Lê Quang Đạo"
 ];
-
-export const nhaCaiCachLanhTuLanhDao = [
+export const Nhà_Cải_Cách_Lãnh_Tụ_Lãnh_Đạo = [
   "Bùi Viện",
   "Đinh Công Tráng",
   "Hồ Chí Minh",
