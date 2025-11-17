@@ -21,7 +21,7 @@ const SearchBar = ({ searchTerm, showSuggestions, suggestions, onSearchChange, o
     <div className={styles.searchContainer} ref={dropdownRef}>
       <input
         type="text"
-        placeholder="Search characters by name..."
+        placeholder="Tìm kiếm"
         value={searchTerm}
         onChange={onSearchChange}
         className={styles.searchInput}

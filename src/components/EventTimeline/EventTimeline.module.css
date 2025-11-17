@@ -157,10 +157,11 @@
   content: "";
   width: 14px;
   height: 14px;
-  background: #ccc;
+  background: #ffffff;
   border-radius: 50%;
   transition: all 0.3s ease;
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+  margin-top: 10px;
 }
 
 .timelineMilestone.active::before {
@@ -178,13 +179,15 @@
   max-width: 90px;
   overflow: hidden;
   text-overflow: ellipsis;
-  text-shadow: -1px -1px 0 white, 1px -1px 0 white, -1px 1px 0 white, 1px 1px 0 white;
+  text-shadow: -1px -1px 0 rgb(15, 15, 15), 1px -1px 0 rgb(10, 2, 2), -1px 1px 0 rgb(8, 8, 8), 1px 1px 0 rgb(8, 8, 8);
+  font-weight: bold;
+  color: white
 }
 
 .timelineMilestone.active .milestoneLabel {
   color: #DA001E;
   font-weight: bold;
-  
+  text-shadow: -1px -1px 0 rgb(255, 255, 255), 1px -1px 0 rgb(248, 247, 247), -1px 1px 0 rgb(250, 247, 247), 1px 1px 0 rgb(253, 252, 252);
 }
 
 /* Event Detail Modal */

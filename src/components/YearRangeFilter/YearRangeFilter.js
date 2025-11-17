@@ -49,6 +49,7 @@ const YearRangeFilter = ({ startYear, endYear, minYear, maxYear, onStartYearChan
   }, []);
 
   return (
+    <div><span className={styles.label}>Tìm kiếm theo khoảng thời gian</span>
     <div
       className={styles.sliderContainer}
       onMouseDown={handleMouseDown}
@@ -76,10 +77,7 @@ const YearRangeFilter = ({ startYear, endYear, minYear, maxYear, onStartYearChan
         style={{ pointerEvents: 'none' }}
         readOnly
       />
-      <div className={styles.values}>
-        <span>Start: {startYear}</span>
-        <span>End: {endYear}</span>
-      </div>
+    </div>
     </div>
   );
 };
