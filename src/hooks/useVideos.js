@@ -5,7 +5,7 @@ export const useVideos = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [filter, setFilter] = useState('All');
+  const [filter, setFilter] = useState('Tất cả');
   const [searchTerm, setSearchTerm] = useState('');
   const [showSuggestions, setShowSuggestions] = useState(false);
   const videosPerPage = 10;
@@ -31,7 +31,7 @@ export const useVideos = () => {
 
   // Filter videos based on selected category and search term
   const filteredVideos = videos.filter((video) => {
-    const matchesFilter = filter === 'All' || video.category === filter;
+    const matchesFilter = filter === 'Tất cả' || video.category === filter;
     const matchesSearch = video.name.toLowerCase().includes(searchTerm.toLowerCase());
     return matchesFilter && matchesSearch;
   });

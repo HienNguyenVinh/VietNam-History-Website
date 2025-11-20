@@ -1,0 +1,42 @@
+/* Styles for Course list */
+.coursePage {
+  padding: 20px;
+}
+
+.courseTitle {
+  color: white;
+  margin: 0 0 8px 0;
+}
+
+.courseGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.courseCard {
+  background: rgba(255,255,255,0.95);
+  padding: 12px;
+  border-radius: 8px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+}
+
+.courseCard h3 {
+  margin-bottom: 6px;
+}
+
+.courseCard p {
+  margin: 0;
+}
+
+.courseCardActions {
+  margin-top: 8px;
+  display: flex;
+  gap: 8px;
+}
+/* Progress bar styles */
+.courseProgress { margin: 8px 0 12px 0; }
+.progressLabel { font-size: 0.9rem; color: #333; margin-bottom: 6px; }
+.progressBar { background: #e9ecef; border-radius: 12px; height: 12px; overflow: hidden; }
+.progressFill { background: linear-gradient(90deg,#DA001E,#FFCD00); height: 100%; transition: width 300ms ease; }

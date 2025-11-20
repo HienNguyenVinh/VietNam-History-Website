@@ -14,6 +14,13 @@ import { useVideos } from './hooks/useVideos';
 import { useEvents } from './hooks/useEvents';
 import { useNhanVat } from './hooks/useNhanVat';
 import ChatPage from './components/Chat/ChatPage';
+import Course from './components/Course/Course';
+import CourseDetail from './components/Course/CourseDetail';
+import { useNavigate } from 'react-router-dom';
+import Login from './components/Auth/Login';
+import Register from './components/Auth/Register';
+import { getUser, logout } from './utils/auth';
+import { useState, useEffect } from 'react';
 
 function App() {
   const location = useLocation();
@@ -21,6 +28,18 @@ function App() {
   const eventsHook = useEvents();
   const nhanVatHook = useNhanVat();
   const fullNhanVat = nhanVatHook.fullNhanVat;
+  const [user, setUser] = useState(null);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    setUser(getUser());
+  }, []);
+
+  const handleLogout = () => {
+    logout();
+    setUser(null);
+    navigate('/');
+  };
 
   if (videosHook.loading || eventsHook.loading || nhanVatHook.loading) return <div className="App">Loading...</div>;
   if (videosHook.error || eventsHook.error || nhanVatHook.error) return <div className="App">Error: {videosHook.error || eventsHook.error || nhanVatHook.error}</div>;
@@ -28,17 +47,34 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <h1><Link to="/" style={{ textDecoration: 'none', color: 'inherit' }}>Học lịch sử</Link></h1>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+          <h1><Link to="/" style={{ textDecoration: 'none', color: 'inherit' }}>Học lịch sử</Link></h1>
+          <div className="headerAuth">
+            {user ? (
+              <div className="headerUser">
+                <span className="userName">Xin chào, {user.name}</span>
+                <button className="authSmallButton" onClick={handleLogout}>Đăng xuất</button>
+              </div>
+            ) : (
+              <div className="headerAuthLinks">
+                <Link to="/login" className="authSmallButton">Đăng nhập</Link>
+                <Link to="/register" className="authSmallButton">Đăng ký</Link>
+              </div>
+            )}
+          </div>
+        </div>
         <nav className="navLinks">
           <Link to="/" className={location.pathname === '/' ? 'active' : ''}>Dòng Thời Gian</Link>
           <Link to="/video" className={location.pathname === '/video' ? 'active' : ''}>Video</Link>
           <Link to="/chat" className={location.pathname === '/chat' ? 'active' : ''}>Chat</Link>
           <Link to="/nhan-vat" className={location.pathname.startsWith('/nhan-vat') ? 'active' : ''}>Nhân vật</Link>
+          
         </nav>
       </header>
       <main>
         <Routes>
           <Route path="/" element={
+            <>
             <EventTimeline
               events={eventsHook.events}
               timelineIndex={eventsHook.timelineIndex}
@@ -49,7 +85,10 @@ function App() {
               onCloseEventDetail={eventsHook.closeEventDetail}
               setTimelineIndex={eventsHook.setTimelineIndex}
             />
+            <div className="learnsec">{user ? (<button onClick={()=>navigate('/course')}>Học ngay</button>) : (<span>Đăng nhập để học</span>)}</div></>
           } />
+          <Route path="/course" element={<Course />} />
+          <Route path="/course/:id" element={<CourseDetail />} />
           <Route path="/video" element={
             <>
               <div className="videoHeader">
@@ -73,6 +112,8 @@ function App() {
             </>
           } />
           <Route path="/chat" element={<ChatPage />} />
+          <Route path="/login" element={<Login setUser={setUser} />} />
+          <Route path="/register" element={<Register />} />
           <Route path="/nhan-vat" element={
             <>
               <div className="nhanVatHeader">

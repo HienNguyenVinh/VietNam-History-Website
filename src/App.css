@@ -73,6 +73,41 @@ body {
   box-shadow: 0 0 15px rgba(218, 0, 30, 0.5);
 }
 
+/* Header auth area (next to title) */
+.headerAuth {
+  display: flex;
+  align-items: center;
+}
+
+.headerAuthLinks {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.authSmallButton {
+  background: white;
+  color: #333;
+  border: 1px solid rgba(0,0,0,0.08);
+  padding: 0.35rem 0.6rem;
+  border-radius: 14px;
+  font-size: 0.9rem;
+  text-decoration: none;
+}
+
+.headerUser {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.userName {
+  font-weight: 600;
+  color: white;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+}
+
+.authSmallButton:hover { transform: translateY(-1px); }
+
 /* Main Content */
 main {
   flex: 1;
@@ -141,4 +176,59 @@ main {
     flex-direction: column;
     align-items: flex-start;
   }
+}
+
+/* Auth card and form styles */
+.authCard {
+  max-width: 520px;
+  margin: 1rem auto;
+  background: rgba(255,255,255,0.92);
+  padding: 1.25rem;
+  border-radius: 10px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+}
+
+.authCard h2 { margin-bottom: 0.5rem; }
+
+.authForm { display: flex; flex-direction: column; gap: 0.75rem; }
+
+.authField label { display: block; margin-bottom: 0.25rem; font-weight: 600; }
+.authField input { width: 100%; padding: 0.6rem 0.75rem; border-radius: 8px; border: 1px solid #ddd; }
+
+.authActions { margin-top: 0.5rem; }
+.authButton { background: linear-gradient(45deg,#DA001E,#FFCD00); color: white; border: none; padding: 0.6rem 1rem; border-radius: 20px; cursor: pointer; font-weight: 700; }
+.authButton:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(218,0,30,0.18); }
+
+.authError { color: #b00020; font-weight: 600; margin-top: 0.5rem; }
+
+.fieldError {
+  color: #b00020;
+  font-size: 0.9rem;
+  margin-top: 0.35rem;
+}
+
+.learnsec {
+  text-align: center;
+  margin-top: 5rem;  
+}
+.learnsec span{
+  font-weight: bold;  
+  color: #fcf8f8;
+  font-size: 1rem;
+  text-shadow:
+    -1px -1px 0 #0f0103,
+     1px -1px 0 #0a0102,
+    -1px  1px 0 #0e0103,
+     1px  1px 0 #140103;
+}
+.learnsec button{
+  margin-top: 1rem;
+  background: linear-gradient(45deg,#DA001E,#FFCD00); 
+  color: white; 
+  border: none; 
+  padding: 0.6rem 1rem; 
+  border-radius: 20px; 
+  cursor: pointer; 
+  font-weight: 700; 
+  font-size: 1rem;
 }
