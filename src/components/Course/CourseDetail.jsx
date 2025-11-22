@@ -230,7 +230,7 @@ export default function CourseDetail() {
               onClick={() => setOpenIndex(openIndex === idx ? null : idx)}
             >
               <strong style={{ color: 'black' }}>{ev.title || ev.name || `Sự kiện ${ev.id}`}</strong>
-              <span style={{ color: 'black' }}>{openIndex === idx ? '▲' : '▼'}</span>
+              <span style={{ color: 'black' }}>{eventScores[ev.id]!=null?'Đã hoàn thành':'Làm bài kiểm tra để hoàn thành'} {openIndex === idx ? '▲' : '▼'}</span>
             </button>
             {openIndex === idx && (
               <div className="eventBody">
