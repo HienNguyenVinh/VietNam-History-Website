@@ -57,7 +57,7 @@ app.get('/api/events', async (req, res) => {
 // Route to fetch all nhan_vat
 app.get('/api/nhan_vat', async (req, res) => {
   try {
-    const result = await pool.query("SELECT * FROM nhan_vat WHERE birth_year != 'N/A' OR death_year != 'N/A'");
+    const result = await pool.query("SELECT * FROM nhan_vat ");
     res.json(result.rows);
   } catch (err) {
     console.error('Error fetching nhan_vat:', err);
@@ -121,19 +121,19 @@ app.post('/api/register', async (req, res) => {
 app.post('/api/login', async (req, res) => {
   const { email, password } = req.body;
   if (!email || !password) {
-    return res.status(400).json({ error: 'Email and password are required' });
+    return res.status(400).json({ error: 'Email và mật khẩu là bắt buộc' });
   }
 
   try {
     const result = await pool.query('SELECT id, name, email, password_hash FROM users WHERE email = $1', [email]);
     if (result.rows.length === 0) {
-      return res.status(400).json({ error: 'Invalid email or password' });
+      return res.status(400).json({ error: 'Sai email hoặc mật khẩu' });
     }
 
     const user = result.rows[0];
     const match = await bcrypt.compare(password, user.password_hash);
     if (!match) {
-      return res.status(400).json({ error: 'Invalid email or password' });
+      return res.status(400).json({ error: 'Sai email hoặc mật khẩu' });
     }
 
     const token = jwt.sign({ id: user.id, email: user.email }, JWT_SECRET, { expiresIn: '7d' });

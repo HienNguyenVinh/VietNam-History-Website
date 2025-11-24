@@ -21,10 +21,12 @@ export default function CourseDetail() {
   const [eventVideosLoading, setEventVideosLoading] = useState({});
   const [showVideoModal, setShowVideoModal] = useState(false);
   const [selectedVideo, setSelectedVideo] = useState(null);
-  const [showvideoList,setshowvideoList] = useState(false);
+  const [showvideoList,setshowvideoList] = useState({});
   const [eventChars, setEventChars] = useState({});
   const [eventCharsLoading, setEventCharsLoading] = useState({});
   const [showCharList, setShowCharList] = useState({});
+  const [eventDescPages, setEventDescPages] = useState({});
+  const [eventDescPageIndex, setEventDescPageIndex] = useState({});
   const openQuiz = async (ev) => {
     setModalEvent(ev);
     setModalOpen(true);
@@ -177,6 +179,31 @@ export default function CourseDetail() {
     load();
   }, [id]);
 
+  // build description pages whenever events change
+  useEffect(() => {
+    const pagesMap = {};
+    const pageIndexMap = {};
+    const chunkSize = 100; // approx chars per page
+    const chunkText = (text, size) => {
+      if (!text) return [''];
+      const words = text.split(/\s+/)
+      const parts = [];
+       for (let i = 0; i < words.length; i += size) {
+    parts.push(words.slice(i, i + size).join(' '));
+  }
+
+      return parts;
+    };
+    events.forEach(ev => {
+      const desc = ev.description || '';
+      const pages = chunkText(desc, chunkSize);
+      pagesMap[ev.id] = pages;
+      pageIndexMap[ev.id] = 0;
+    });
+    setEventDescPages(pagesMap);
+    setEventDescPageIndex(pageIndexMap);
+  }, [events]);
+
   // When an event dropdown is opened, prefetch videos for that event so we can
   // decide whether to show the "Xem video" button and avoid a second fetch.
   useEffect(() => {
@@ -230,36 +257,62 @@ export default function CourseDetail() {
               onClick={() => setOpenIndex(openIndex === idx ? null : idx)}
             >
               <strong style={{ color: 'black' }}>{ev.title || ev.name || `Sự kiện ${ev.id}`}</strong>
-              <span style={{ color: 'black' }}>{eventScores[ev.id]!=null?'Đã hoàn thành':'Làm bài kiểm tra để hoàn thành'} {openIndex === idx ? '▲' : '▼'}</span>
+              <span style={{ color: 'black' }}>{eventScores[ev.id]!=null?<span style={{color: 'green'}}>Đã hoàn thành</span>:<span style={{color: 'orange'}}>Làm bài kiểm tra để hoàn thành</span>} {openIndex === idx ? '▲' : '▼'}</span>
             </button>
             {openIndex === idx && (
               <div className="eventBody">
                 {ev.start && <div><strong>Bắt đầu:</strong> {ev.start}</div>}
                 {ev.end && <div><strong>Kết thúc:</strong> {ev.end}</div>}
                 {ev.name && <div><strong>Tên:</strong> {ev.name}</div>}
-                {ev.description && <div style={{ marginTop: 6 }}>{ev.description}</div>}
-                <div style={{ marginTop: 8 }}>
-                  <button className="authSmallButton" onClick={() => openQuiz(ev)}>Kiểm tra</button>
-                  {eventVideos[ev.id] && eventVideos[ev.id].length > 0 ? (
-                    <button style={{ marginLeft: 8 }} className="authSmallButton" onClick={() => {setshowvideoList(true) }}>Xem video</button>
-                  ) : (
-                    // show button to load videos only if we don't yet know; we'll try to load when opening
-                    null
-                  )}
-                  {eventChars[ev.id] && eventChars[ev.id].length > 0 ? (
-                    <button style={{ marginLeft: 8 }} className="authSmallButton" onClick={() => setShowCharList(prev => ({ ...prev, [ev.id]: true }))}>Xem nhân vật</button>
-                  ) : null}
-                  {eventScores[ev.id] != null && (
-                    <span style={{ marginLeft: 12, color: 'black', fontWeight: 700 }}>Điểm: {eventScores[ev.id]}%</span>
-                  )}
+                {ev.description && (
+                  <div className="eventDescription" style={{ marginTop: 6 }}>
+                    {eventDescPages[ev.id] && eventDescPages[ev.id].length > 0 ? (
+                      <div>
+                        <div className="descPageContent">{eventDescPages[ev.id][(eventDescPageIndex[ev.id] || 0)]}</div>
+                        <div className="descPager">
+                          <button
+                            className="pagerBtn"
+                            onClick={() => setEventDescPageIndex(prev => ({ ...prev, [ev.id]: Math.max((prev[ev.id] || 0) - 1, 0) }))}
+                            disabled={(eventDescPageIndex[ev.id] || 0) <= 0}
+                          >&lt;</button>
+                          <span className="pagerInfo">Trang {(eventDescPageIndex[ev.id] || 0) + 1} / {eventDescPages[ev.id].length}</span>
+                          <button
+                            className="pagerBtn"
+                            onClick={() => setEventDescPageIndex(prev => ({ ...prev, [ev.id]: Math.min((prev[ev.id] || 0) + 1, eventDescPages[ev.id].length - 1) }))}
+                            disabled={(eventDescPageIndex[ev.id] || 0) >= (eventDescPages[ev.id].length - 1)}
+                          >&gt;</button>
+                        </div>
+                      </div>
+                    ) : (
+                      <div>{ev.description}</div>
+                    )}
+                  </div>
+                )}
+                <div className="eventFooter" style={{ marginTop: 8 }}>
+                  <div className="footerActions">
+                    <div className="actionGroup">
+                      <button className="authSmallButton" onClick={() => openQuiz(ev)}>Kiểm tra</button>
+                      {eventVideos[ev.id] && eventVideos[ev.id].length > 0 ? (
+                        <button style={{ marginLeft: 8 }} className="authSmallButton" onClick={() => setshowvideoList(prev =>({ ...prev, [ev.id]: true }) )}>Xem video</button>
+                      ) : null}
+                      {eventChars[ev.id] && eventChars[ev.id].length > 0 ? (
+                        <button style={{ marginLeft: 8 }} className="authSmallButton" onClick={() => setShowCharList(prev => ({ ...prev, [ev.id]: true }))}>Xem nhân vật</button>
+                      ) : null}
+                      <div className="scoreBox">{eventScores[ev.id] != null ? `Điểm: ${eventScores[ev.id]}%` : 'Điểm: -'}</div>
+                    </div>
+                    <div className="footerNav">
+                      <button className="navBtn" onClick={() => setOpenIndex(idx > 0 ? idx - 1 : idx)} disabled={idx === 0}>&lt;</button>
+                      <button className="navBtn" onClick={() => setOpenIndex(idx < events.length - 1 ? idx + 1 : idx)} disabled={idx >= events.length - 1}>&gt;</button>
+                    </div>
+                  </div>
                 </div>
                 {/* Videos list (if loaded) */}
                 {eventVideosLoading[ev.id] && <div style={{ marginTop: 8 }}>Đang tải video...</div>}
-                {eventVideos[ev.id] && eventVideos[ev.id].length > 0 && showvideoList&&(
+                {eventVideos[ev.id] && eventVideos[ev.id].length > 0 && showvideoList[ev.id]&&(
                   <div className="eventVideos" style={{ marginTop: 10 }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                       <h4 style={{ margin: '6px 0' }}>Video liên quan</h4>
-                      <button className="authSmallButton" onClick={() => setshowvideoList(false)}>Đóng danh sách</button>
+                      <button className="authSmallButton" onClick={() => setshowvideoList(prev=> ({ ...prev, [ev.id]: false }))}>Đóng danh sách</button>
                     </div>
                     <ul>
                       {eventVideos[ev.id].map(v => (

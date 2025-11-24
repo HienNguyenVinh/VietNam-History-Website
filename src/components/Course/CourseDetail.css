@@ -127,3 +127,19 @@
 .eventCharacters ul { list-style: none; padding-left: 0; }
 .eventCharacters li { background: #fafafa; padding: 8px; border-radius: 6px; border: 1px solid #eee; }
 .eventCharacters a { color: #0a58ca; text-decoration: underline; }
+
+/* Footer grouping and pager */
+.eventFooter { margin-top: 10px; }
+.footerActions { display:flex; justify-content:space-between; align-items:center; gap:12px; }
+.actionGroup { display:flex; align-items:center; gap:8px; }
+.scoreBox { font-weight:700; color:#111; margin-left:8px; }
+.footerNav { display:flex; gap:8px; }
+.navBtn { background:#fff; border:1px solid #ddd; padding:6px 10px; border-radius:6px; cursor:pointer; }
+.navBtn:disabled { opacity:0.5; cursor:default; }
+
+/* description pager */
+.eventDescription { background: #fff; padding: 10px; border-radius: 8px; max-height: 240px; overflow: hidden; }
+.descPageContent { white-space: pre-wrap; color:#222; max-height:200px; overflow:auto; padding-right:8px; }
+.descPager { display:flex; justify-content:center; align-items:center; gap:8px; margin-top:8px; }
+.pagerBtn { background:#fff; border:1px solid #ddd; padding:6px 10px; border-radius:6px; cursor:pointer; }
+.pagerInfo { font-size:0.9rem; color:#333; }
