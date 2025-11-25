@@ -93,7 +93,7 @@ const EventTimeline = ({ events, timelineIndex, selectedEvent, onPrevEvents, onN
           <div className={styles.eventDetailContent}>
             <button onClick={onCloseEventDetail} className={styles.closeButton}>×</button>
             <h2>{selectedEvent.name}</h2>
-            <p><strong>Years:</strong> { `${selectedEvent.start} - ${selectedEvent.end}`}</p>
+            <p><strong>Năm:</strong> { `${selectedEvent.start} - ${selectedEvent.end}`}</p>
             <p>{selectedEvent.description}</p>
           </div>
         </div>
