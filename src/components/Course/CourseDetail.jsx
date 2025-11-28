@@ -1,32 +1,131 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import './CourseDetail.css';
-import { getToken, getUser } from '../../utils/auth';
+import { getToken } from '../../utils/auth';
 import { getFirstTwoSentences } from '../../utils/getFirstTwoSentences';
+
 export default function CourseDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
+
   const [course, setCourse] = useState(null);
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [openIndex, setOpenIndex] = useState(null);
+
+  const [selectedEvent, setSelectedEvent] = useState(null);
+  const [eventVideos, setEventVideos] = useState({});
+  const [eventChars, setEventChars] = useState({});
+  const [eventScores, setEventScores] = useState({});
+
   const [modalOpen, setModalOpen] = useState(false);
   const [modalEvent, setModalEvent] = useState(null);
   const [questions, setQuestions] = useState([]);
   const [answers, setAnswers] = useState({});
   const [submitting, setSubmitting] = useState(false);
-  const [eventScores, setEventScores] = useState({});
-  const [eventVideos, setEventVideos] = useState({});
-  const [eventVideosLoading, setEventVideosLoading] = useState({});
+
   const [showVideoModal, setShowVideoModal] = useState(false);
   const [selectedVideo, setSelectedVideo] = useState(null);
-  const [showvideoList,setshowvideoList] = useState({});
-  const [eventChars, setEventChars] = useState({});
-  const [eventCharsLoading, setEventCharsLoading] = useState({});
-  const [showCharList, setShowCharList] = useState({});
-  const [eventDescPages, setEventDescPages] = useState({});
-  const [eventDescPageIndex, setEventDescPageIndex] = useState({});
+
+  const getEmbedSrc = (link) => {
+    if (!link) return null;
+    try {
+      const u = new URL(link);
+      if (u.hostname.includes('youtube.com')) {
+        const v = u.searchParams.get('v');
+        if (v) return `https://www.youtube.com/embed/${v}`;
+      }
+      if (u.hostname.includes('youtu.be')) {
+        const id = u.pathname.replace(/^\//, '');
+        if (id) return `https://www.youtube.com/embed/${id}`;
+      }
+    } catch (e) {}
+    if (typeof link === 'string' && link.endsWith('.mp4')) return link;
+    return link;
+  };
+
+  const renderVideoThumb = (v) => {
+    try {
+      const u = new URL(v.link);
+      if (u.hostname.includes('youtube.com') || u.hostname.includes('youtu.be')) {
+        const vid = u.searchParams.get('v') || u.pathname.replace(/^\//, '');
+        return <img src={`https://img.youtube.com/vi/${vid}/mqdefault.jpg`} alt="thumb" />;
+      }
+    } catch (e) {}
+    return <div className="thumbPlaceholder">▶</div>;
+  };
+
+  // Load course and events
+  useEffect(() => {
+    const token = getToken();
+    if (!token) {
+      navigate('/login');
+      return;
+    }
+    const load = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const [coursesRes, eventsRes] = await Promise.all([
+          fetch('http://localhost:3001/api/courses').then(r => r.json()),
+          fetch(`http://localhost:3001/api/courses/${id}/events`).then(r => r.json())
+        ]);
+        const found = Array.isArray(coursesRes) ? coursesRes.find(c => String(c.id) === String(id)) : null;
+        setCourse(found);
+        setEvents(Array.isArray(eventsRes) ? eventsRes : []);
+        if (Array.isArray(eventsRes) && eventsRes.length > 0) setSelectedEvent(eventsRes[0]);
+
+        const token = getToken();
+        const scores = {};
+        await Promise.all((eventsRes || []).map(async (ev) => {
+          try {
+            const r = await fetch(`http://localhost:3001/api/events/${ev.id}/last-test`, { headers: { Authorization: `Bearer ${token}` } });
+            if (!r.ok) return;
+            const d = await r.json();
+            if (d && typeof d.result !== 'undefined') scores[ev.id] = d.result;
+          } catch (e) {}
+        }));
+        setEventScores(scores);
+      } catch (err) {
+        setError(err.message || 'Failed to load');
+      } finally {
+        setLoading(false);
+      }
+    };
+    load();
+  }, [id, navigate]);
+
+  useEffect(() => {
+    const ev = selectedEvent;
+    if (!ev) return;
+    (async () => {
+      try {
+        if (!eventVideos[ev.id]) {
+          const r = await fetch(`http://localhost:3001/api/events/${ev.id}/videos`);
+          const d = await r.json();
+          if (r.ok) setEventVideos(prev => ({ ...prev, [ev.id]: Array.isArray(d) ? d : [] }));
+        }
+      } catch (e) {}
+      try {
+        if (!eventChars[ev.id]) {
+          const r2 = await fetch(`http://localhost:3001/api/events/${ev.id}/characters`);
+          const d2 = await r2.json();
+          if (r2.ok) setEventChars(prev => ({ ...prev, [ev.id]: Array.isArray(d2) ? d2 : [] }));
+        }
+      } catch (e) {}
+      try {
+        const token = getToken();
+        if (token) {
+          const r3 = await fetch(`http://localhost:3001/api/events/${ev.id}/last-test`, { headers: { Authorization: `Bearer ${token}` } });
+          if (r3.ok) {
+            const d3 = await r3.json();
+            if (d3 && typeof d3.result !== 'undefined') setEventScores(prev => ({ ...prev, [ev.id]: d3.result }));
+          }
+        }
+      } catch (e) {}
+    })();
+  }, [selectedEvent]);
+
   const openQuiz = async (ev) => {
     setModalEvent(ev);
     setModalOpen(true);
@@ -35,12 +134,8 @@ export default function CourseDetail() {
     try {
       const res = await fetch(`http://localhost:3001/api/events/${ev.id}/questions`);
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Failed to load questions');
-      setQuestions(Array.isArray(data) ? data : []);
-    } catch (err) {
-      console.error('Error loading questions', err);
-      setQuestions([]);
-    }
+      if (res.ok) setQuestions(Array.isArray(data) ? data : []);
+    } catch (e) { setQuestions([]); }
   };
 
   const submitQuiz = async (e) => {
@@ -51,302 +146,87 @@ export default function CourseDetail() {
     let correct = 0;
     for (const q of questions) {
       const sel = answers[q.id];
-      // q.ans might be numeric index ("1","2","3") or the option text
       const correctOpt = (q.ans === '1' || q.ans === '2' || q.ans === '3') ? q['opt' + q.ans] : q.ans;
       if (sel && correctOpt && String(sel).trim() === String(correctOpt).trim()) correct += 1;
     }
     const score = Math.round((correct / total) * 100);
-
     const token = getToken();
-    if (!token) {
-      alert('Bạn cần đăng nhập để nộp bài.');
-      return;
-    }
-    //const user = getUser();
+    if (!token) { alert('Bạn cần đăng nhập để nộp bài.'); return; }
     setSubmitting(true);
     try {
       const res = await fetch('http://localhost:3001/api/tests', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-        body: JSON.stringify({ courseid: course ? course.id : null,event_id: modalEvent.id, result: score })
+        method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ courseid: course ? course.id : null, event_id: modalEvent.id, result: score })
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Failed to submit test');
+      if (!res.ok) throw new Error(data.error || 'Failed');
       setEventScores(prev => ({ ...prev, [modalEvent.id]: score }));
-      setModalOpen(false);
-      setQuestions([]);
-      setAnswers({});
-    } catch (err) {
-      console.error('Error submitting test', err);
-      alert(err.message || 'Lỗi khi nộp bài');
-    } finally {
-      setSubmitting(false);
-    }
+      setModalOpen(false); setQuestions([]); setAnswers({});
+    } catch (err) { alert(err.message || 'Lỗi khi nộp bài'); }
+    finally { setSubmitting(false); }
   };
 
-  const openVideos = async (ev) => {
-    // if already loaded, just show modal later via list; otherwise load
-    if (eventVideos[ev.id]) return;
-    setEventVideosLoading(prev => ({ ...prev, [ev.id]: true }));
-    try {
-      const res = await fetch(`http://localhost:3001/api/events/${ev.id}/videos`);
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Failed to load videos');
-      setEventVideos(prev => ({ ...prev, [ev.id]: Array.isArray(data) ? data : [] }));
-    } catch (err) {
-      console.error('Error loading videos', err);
-      setEventVideos(prev => ({ ...prev, [ev.id]: [] }));
-    } finally {
-      setEventVideosLoading(prev => ({ ...prev, [ev.id]: false }));
-    }
-  };
+  const openVideoModal = (v) => { setSelectedVideo(v); setShowVideoModal(true); };
+  const closeVideoModal = () => { setSelectedVideo(null); setShowVideoModal(false); };
 
-  const openCharacters = async (ev) => {
-    // toggle if already loaded
-    if (eventChars[ev.id]) {
-      return;
-    }
-    setEventCharsLoading(prev => ({ ...prev, [ev.id]: true }));
-    try {
-      const res = await fetch(`http://localhost:3001/api/events/${ev.id}/characters`);
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Failed to load characters');
-      setEventChars(prev => ({ ...prev, [ev.id]: Array.isArray(data) ? data : [] }));
-      setShowCharList(prev => ({ ...prev, [ev.id]: false }))
-    } catch (err) {
-      console.error('Error loading characters', err);
-      setEventChars(prev => ({ ...prev, [ev.id]: [] }));
-    } finally {
-      setEventCharsLoading(prev => ({ ...prev, [ev.id]: false }));
-    }
-  };
-
-  const openVideoModal = (video) => {
-    setSelectedVideo(video);
-    setShowVideoModal(true);
-  };
-
-  const closeVideoModal = () => {
-    setSelectedVideo(null);
-    setShowVideoModal(false);
-  };
-
-  useEffect(() => {
-    // client-side guard: require authentication to view course detail
-    const token = getToken();
-    if (!token) {
-      navigate('/login');
-      return;
-    }
-    const load = async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        const [courseRes, eventsRes] = await Promise.all([
-          fetch(`http://localhost:3001/api/courses`).then(r => r.json()),
-          fetch(`http://localhost:3001/api/courses/${id}/events`).then(r => r.json())
-        ]);
-
-        // find course info
-        const found = Array.isArray(courseRes) ? courseRes.find(c => String(c.id) === String(id)) : null;
-        setCourse(found);
-        setEvents(Array.isArray(eventsRes) ? eventsRes : []);
-        // if logged in, fetch last saved test score per event
-        const token = getToken();
-        if (token && Array.isArray(eventsRes)) {
-          const evs = Array.isArray(eventsRes) ? eventsRes : [];
-          const scores = {};
-          await Promise.all(evs.map(async (ev) => {
-            try {
-              const r = await fetch(`http://localhost:3001/api/events/${ev.id}/last-test`, {
-                headers: { 'Authorization': `Bearer ${token}` }
-              });
-              if (!r.ok) return;
-              const d = await r.json();
-              if (d && typeof d.result !== 'undefined') scores[ev.id] = d.result;
-            } catch (e) {
-              // ignore per-event fetch errors
-            }
-          }));
-          setEventScores(prev => ({ ...prev, ...scores }));
-        }
-      } catch (err) {
-        setError(err.message || 'Failed to load');
-      } finally {
-        setLoading(false);
-      }
-    };
-    load();
-  }, [id]);
-
-  // build description pages whenever events change
-  useEffect(() => {
-    const pagesMap = {};
-    const pageIndexMap = {};
-    const chunkSize = 100; // approx chars per page
-    const chunkText = (text, size) => {
-      if (!text) return [''];
-      const words = text.split(/\s+/)
-      const parts = [];
-       for (let i = 0; i < words.length; i += size) {
-    parts.push(words.slice(i, i + size).join(' '));
-  }
-
-      return parts;
-    };
-    events.forEach(ev => {
-      const desc = ev.description || '';
-      const pages = chunkText(desc, chunkSize);
-      pagesMap[ev.id] = pages;
-      pageIndexMap[ev.id] = 0;
-    });
-    setEventDescPages(pagesMap);
-    setEventDescPageIndex(pageIndexMap);
-  }, [events]);
-
-  // When an event dropdown is opened, prefetch videos for that event so we can
-  // decide whether to show the "Xem video" button and avoid a second fetch.
-  useEffect(() => {
-    if (openIndex == null) return;
-    const ev = events[openIndex];
-    if (!ev) return;
-    // load videos if not already loaded and not loading
-    if (!eventVideos[ev.id] && !eventVideosLoading[ev.id]) {
-      openVideos(ev).catch(() => {});
-    }
-    // load characters if not already loaded and not loading
-    if (!eventChars[ev.id] && !eventCharsLoading[ev.id]) {
-      openCharacters(ev).catch(() => {});
-    }
-  }, [openIndex, events]);
-
-  const getEmbedSrc = (link) => {
-    if (!link) return null;
-    try {
-      const u = new URL(link);
-      // youtube links
-      if (u.hostname.includes('youtube.com')) {
-        const v = u.searchParams.get('v');
-        if (v) return `https://www.youtube.com/embed/${v}`;
-      }
-      if (u.hostname.includes('youtu.be')) {
-        const id = u.pathname.replace(/^\//, '');
-        if (id) return `https://www.youtube.com/embed/${id}`;
-      }
-    } catch (e) {
-      // not a valid URL, fallthrough
-    }
-    // fallback to direct link (may be mp4 or another embeddable url)
-    return link;
-  };
-
-  if (loading) return <div className="App">Loading course...</div>;
-  if (error) return <div className="App">Error: {error}</div>;
+  if (loading) return <div>Đang tải...</div>;
+  if (error) return <div style={{ color: 'red' }}>{error}</div>;
 
   return (
-    <div className="courseDetailPage">
-      <h2 className="courseTitle">{course ? (course.title || course.name) : `Khóa ${id}`}</h2>
-      {course && course.description && <p className="courseDesc">{course.description}</p>}
+    <div className="courseDetailGrid">
+      <aside className="leftColumn">
+        <ul className="eventList">
+          {events.map(ev => (
+            <li key={ev.id} className={selectedEvent && String(selectedEvent.id) === String(ev.id) ? 'eventItem active' : 'eventItem'} onClick={() => setSelectedEvent(ev)}>
+              <div className="eventItemTitle">{ev.title || ev.name || `Sự kiện ${ev.id}`}</div>
+              <div className="eventItemMeta">{ev.start||''}-{ev.end||''}</div>
+            </li>
+          ))}
+        </ul>
+      </aside>
 
-      <div className="courseEvents">
-        {events.length === 0 && <div style={{ color: 'white' }}>Không có sự kiện cho khóa học này.</div>}
-        {events.map((ev, idx) => (
-          <div key={ev.id} className="courseEvent">
-            <button
-              className="eventToggle"
-              onClick={() => setOpenIndex(openIndex === idx ? null : idx)}
-            >
-              <strong style={{ color: 'black' }}>{ev.title || ev.name || `Sự kiện ${ev.id}`}</strong>
-              <span style={{ color: 'black' }}>{eventScores[ev.id]!=null?<span style={{color: 'green'}}>Đã hoàn thành</span>:<span style={{color: 'orange'}}>Làm bài kiểm tra để hoàn thành</span>} {openIndex === idx ? '▲' : '▼'}</span>
-            </button>
-            {openIndex === idx && (
-              <div className="eventBody">
-                {ev.start && <div><strong>Bắt đầu:</strong> {ev.start}</div>}
-                {ev.end && <div><strong>Kết thúc:</strong> {ev.end}</div>}
-                {ev.name && <div><strong>Tên:</strong> {ev.name}</div>}
-                {ev.description && (
-                  <div className="eventDescription" style={{ marginTop: 6 }}>
-                    {eventDescPages[ev.id] && eventDescPages[ev.id].length > 0 ? (
-                      <div>
-                        <div className="descPageContent">{eventDescPages[ev.id][(eventDescPageIndex[ev.id] || 0)]}</div>
-                        <div className="descPager">
-                          <button
-                            className="pagerBtn"
-                            onClick={() => setEventDescPageIndex(prev => ({ ...prev, [ev.id]: Math.max((prev[ev.id] || 0) - 1, 0) }))}
-                            disabled={(eventDescPageIndex[ev.id] || 0) <= 0}
-                          >&lt;</button>
-                          <span className="pagerInfo">Trang {(eventDescPageIndex[ev.id] || 0) + 1} / {eventDescPages[ev.id].length}</span>
-                          <button
-                            className="pagerBtn"
-                            onClick={() => setEventDescPageIndex(prev => ({ ...prev, [ev.id]: Math.min((prev[ev.id] || 0) + 1, eventDescPages[ev.id].length - 1) }))}
-                            disabled={(eventDescPageIndex[ev.id] || 0) >= (eventDescPages[ev.id].length - 1)}
-                          >&gt;</button>
-                        </div>
-                      </div>
-                    ) : (
-                      <div>{ev.description}</div>
-                    )}
-                  </div>
-                )}
-                <div className="eventFooter" style={{ marginTop: 8 }}>
-                  <div className="footerActions">
-                    <div className="actionGroup">
-                      <button className="authSmallButton" onClick={() => openQuiz(ev)}>Kiểm tra</button>
-                      {eventVideos[ev.id] && eventVideos[ev.id].length > 0 ? (
-                        <button style={{ marginLeft: 8 }} className="authSmallButton" onClick={() => setshowvideoList(prev =>({ ...prev, [ev.id]: true }) )}>Xem video</button>
-                      ) : null}
-                      {eventChars[ev.id] && eventChars[ev.id].length > 0 ? (
-                        <button style={{ marginLeft: 8 }} className="authSmallButton" onClick={() => setShowCharList(prev => ({ ...prev, [ev.id]: true }))}>Xem nhân vật</button>
-                      ) : null}
-                      <div className="scoreBox">{eventScores[ev.id] != null ? `Điểm: ${eventScores[ev.id]}%` : 'Điểm: -'}</div>
-                    </div>
-                    <div className="footerNav">
-                      <button className="navBtn" onClick={() => setOpenIndex(idx > 0 ? idx - 1 : idx)} disabled={idx === 0}>&lt;</button>
-                      <button className="navBtn" onClick={() => setOpenIndex(idx < events.length - 1 ? idx + 1 : idx)} disabled={idx >= events.length - 1}>&gt;</button>
-                    </div>
-                  </div>
-                </div>
-                {/* Videos list (if loaded) */}
-                {eventVideosLoading[ev.id] && <div style={{ marginTop: 8 }}>Đang tải video...</div>}
-                {eventVideos[ev.id] && eventVideos[ev.id].length > 0 && showvideoList[ev.id]&&(
-                  <div className="eventVideos" style={{ marginTop: 10 }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <h4 style={{ margin: '6px 0' }}>Video liên quan</h4>
-                      <button className="authSmallButton" onClick={() => setshowvideoList(prev=> ({ ...prev, [ev.id]: false }))}>Đóng danh sách</button>
-                    </div>
-                    <ul>
-                      {eventVideos[ev.id].map(v => (
-                        <li key={v.id} style={{ marginBottom: 8 }}>
-                          <button className="videoPlayLink" onClick={() => openVideoModal(v)} style={{ fontWeight: 700 }}>{v.name || v.title || `Video ${v.id}`}</button>
-                          {v.description && <div className="videoDesc">{v.description}</div>}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-                {/* Characters list (if loaded) */}
-                {eventCharsLoading[ev.id] && <div style={{ marginTop: 8 }}>Đang tải nhân vật...</div>}
-                {eventChars[ev.id] && eventChars[ev.id].length > 0 && showCharList[ev.id] && (
-                  <div className="eventCharacters" style={{ marginTop: 10 }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <h4 style={{ margin: '6px 0' }}>Nhân vật liên quan</h4>
-                      <button className="authSmallButton" onClick={() => setShowCharList(prev => ({ ...prev, [ev.id]: false }))}>Đóng danh sách</button>
-                    </div>
-                    <ul>
-                      {eventChars[ev.id].map(nv => (
-                        <li key={nv.id} style={{ marginBottom: 8 }}>
-                          <a href={`/nhan-vat/${nv.id}`} className="videoPlayLink" style={{ fontWeight: 700 }}>{nv.name || nv.title || `Nhân vật ${nv.id}`}</a>
-                          {nv.description && <div className="videoDesc">{getFirstTwoSentences(nv.description)}</div>}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-              </div>
-            )}
+      <section className="middleColumn">
+        {!selectedEvent ? (
+          <div>Chọn một sự kiện để xem chi tiết.</div>
+        ) : (
+          <div className="middleInner">
+            <h3 className="selectedTitle">{selectedEvent.title || selectedEvent.name}</h3>
+            <div className="descriptionScroll"><div className="descFull">{selectedEvent.description}</div></div>
+            <div className="middleFooter">
+              <button className="authSmallButton" onClick={() => openQuiz(selectedEvent)}>Kiểm tra</button>
+              <div className="scoreBox">{eventScores[selectedEvent.id] != null ? `Điểm: ${eventScores[selectedEvent.id]}%` : 'Điểm: -'}</div>
+            </div>
           </div>
-        ))}
-      </div>
+        )}
+      </section>
+
+      <aside className="rightColumn">
+        <div className="videosColumn">
+          <h4>Video</h4>
+          {selectedEvent && eventVideos[selectedEvent.id] && eventVideos[selectedEvent.id].length > 0 ? (
+            <div className="videosGrid">
+              {eventVideos[selectedEvent.id].map(v => (
+                <div key={v.id} className="videoCardSmall">
+                  <button className="videoThumb" onClick={() => openVideoModal(v)}>{renderVideoThumb(v)}</button>
+                  <div className="videoTitle">{v.name || v.title}</div>
+                </div>
+              ))}
+            </div>
+          ) : <div>Không có video.</div>}
+        </div>
+
+        <div className="charsColumn">
+          <h4>Nhân vật</h4>
+          {selectedEvent && eventChars[selectedEvent.id] && eventChars[selectedEvent.id].length > 0 ? (
+            <ul className="charList">
+              {eventChars[selectedEvent.id].map(nv => (
+                <li key={nv.id}><a href={`/nhan-vat/${nv.id}`}>{nv.name || nv.title}</a></li>
+              ))}
+            </ul>
+          ) : <div>Không có nhân vật.</div>}
+        </div>
+      </aside>
+
       {modalOpen && modalEvent && (
         <div className="quizOverlay">
           <div className="quizCard">
@@ -359,13 +239,9 @@ export default function CourseDetail() {
                   <div className="quizOpts">
                     {[q.opt1, q.opt2, q.opt3].map((opt, oi) => (
                       <label key={oi} className="quizOptLabel">
-                        <input
-                          type="radio"
-                          name={`q_${q.id}`}
-                          value={opt || ''}
+                        <input type="radio" name={`q_${q.id}`} value={opt || ''}
                           checked={answers[q.id] === (opt || '')}
-                          onChange={() => setAnswers(prev => ({ ...prev, [q.id]: opt || '' }))}
-                        />
+                          onChange={() => setAnswers(prev => ({ ...prev, [q.id]: opt || '' }))} />
                         <span>{opt}</span>
                       </label>
                     ))}
@@ -380,6 +256,7 @@ export default function CourseDetail() {
           </div>
         </div>
       )}
+
       {showVideoModal && selectedVideo && (
         <div className="videoOverlay" onClick={closeVideoModal}>
           <div className="videoCard" onClick={e => e.stopPropagation()}>
@@ -391,21 +268,15 @@ export default function CourseDetail() {
               {(() => {
                 const src = getEmbedSrc(selectedVideo.link);
                 if (!src) return <div>Không thể nhúng video này.</div>;
-                // if it's a youtube embed url
-                if (src.includes('youtube.com/embed')) {
-                  return <iframe title="video-player" src={src} allowFullScreen />;
-                }
-                // if it's an mp4 link
-                if (src.endsWith('.mp4')) {
-                  return <video controls src={src} />;
-                }
-                // fallback to iframe (some providers allow embedding)
+                if (src.includes('youtube.com/embed')) return <iframe title="video-player" src={src} allowFullScreen />;
+                if (src.endsWith('.mp4')) return <video controls src={src} />;
                 return <iframe title="video-player" src={src} allowFullScreen />;
               })()}
             </div>
           </div>
         </div>
       )}
+
     </div>
   );
 }

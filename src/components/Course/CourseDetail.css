@@ -1,145 +1,350 @@
-/* Styles for Course detail and events */
-.courseDetailPage {
-  padding: 20px;
+/* CourseDetail.css */
+
+.courseDetailGrid {
+  display: grid;
+  grid-template-columns: 250px 1fr 300px;
+  gap: 0px;
+  padding: 0px;
+  min-height: 90vh;
+  background-color: #f5f5f5;
+  height:fit-content;
 }
 
-.courseTitle {
-  color: white;
-  margin: 0 0 8px 0;
-}
-
-.courseDesc {
-  color: white;
-}
-
-.courseEvents {
-  margin-top: 12px;
-}
-
-.courseEvent {
-  margin-bottom: 8px;
-  background: rgba(255,255,255,0.95);
+.leftColumn {
+  background-color: #fff;
   border-radius: 8px;
-  overflow: hidden;
+  padding: 15px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  max-height: 550px;
+  overflow-y: auto;
 }
 
-.eventToggle {
-  width: 100%;
-  text-align: left;
-  padding: 12px 16px;
-  border-radius: 0;
-  background: #f7f7f7;
-  border: none;
+.eventList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.eventItem {
+  padding: 10px;
+  margin-bottom: 5px;
+  border-radius: 4px;
   cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.eventItem:hover {
+  background-color: #e0e0e0;
+}
+
+.eventItem.active {
+  background-color: #007bff;
+  color: white;
+}
+
+.eventItemTitle {
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.eventItemMeta {
+  font-size: 12px;
+  
+}
+
+.middleColumn {
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  max-height:fit-content;
+}
+
+.middleInner {
+  display: flex;
+  flex-direction: column;
+  height: fit-content;
+}
+
+.selectedTitle {
+  margin: 0 0 15px 0;
+  font-size: 24px;
+  color: #333;
+}
+
+.descriptionScroll {
+  height: 400px;
+  overflow-y: auto;
+  margin-bottom: 20px;
+}
+
+.descFull {
+  line-height: 1.6;
+  color: #555;
+}
+
+.middleFooter {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
-.eventBody {
-  padding: 12px;
+.authSmallButton {
+  background-color: #28a745;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
 }
 
-.eventBody strong { color: #111 }
+.authSmallButton:hover {
+  background-color: #218838;
+}
 
-/* Quiz modal styles */
+.scoreBox {
+  font-weight: bold;
+  color: #007bff;
+}
+
+.rightColumn {
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 15px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  max-height: fit-content;
+}
+
+.videosColumn {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.videosColumn h4 {
+  margin: 0 0 10px 0;
+  font-size: 18px;
+  color: #333;
+}
+
+.videosGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 10px;
+}
+
+.videoCardSmall {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.videoThumb {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  width: 100%;
+  height: 80px;
+  overflow: hidden;
+}
+
+.videoThumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.thumbPlaceholder {
+  width: 100%;
+  height: 100%;
+  background-color: #ccc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  color: #666;
+}
+
+.videoTitle {
+  padding: 5px;
+  font-size: 12px;
+  text-align: center;
+  background-color: #f9f9f9;
+}
+
+.charsColumn {
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.charList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.charList li {
+  margin-bottom: 5px;
+}
+
+.charList a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+.charList a:hover {
+  text-decoration: underline;
+}
+
+/* Quiz Modal */
 .quizOverlay {
   position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.6);
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.5);
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 2000;
+  z-index: 1000;
 }
 
 .quizCard {
-  background: white;
-  color: #111;
-  padding: 16px;
-  max-width: 760px;
-  width: 95%;
-  border-radius: 10px;
-  box-shadow: 0 10px 40px rgba(0,0,0,0.3);
-}
-
-.quizCard {
-  background: white;
-  color: #111;
-  padding: 16px;
-  max-width: 760px;
-  width: 95%;
-  border-radius: 10px;
-  box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+  background-color: white;
+  border-radius: 8px;
+  padding: 20px;
+  max-width: 600px;
+  width: 90%;
   max-height: 80vh;
+  overflow-y: auto;
+}
+
+.quizForm {
+  margin-top: 20px;
+}
+
+.quizQuestion {
+  margin-bottom: 20px;
+}
+
+.quizQ {
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.quizOpts {
   display: flex;
   flex-direction: column;
+  gap: 5px;
 }
 
-.quizForm { display: flex; flex-direction: column; gap: 12px; margin-top: 8px; overflow-y: auto; max-height: calc(80vh - 140px); padding-right: 8px; }
-.quizQuestion { background: #f8f8f8; padding: 10px; border-radius: 8px; }
-.quizQ { font-weight: 700; margin-bottom: 8px; }
-.quizOpts { display: flex; gap: 16px; flex-direction: row; flex-wrap: wrap; }
-.quizOptLabel { display: inline-flex; gap: 8px; align-items: center; padding: 6px 10px; background: white; border-radius: 8px; border: 1px solid #e6e6e6; }
-.quizOptLabel input { width: 18px; height: 18px; }
-.quizActions { display: flex; gap: 12px; justify-content: flex-end; margin-top: 8px; }
-
-/* Make radio options appear horizontally on small screens too */
-@media (max-width: 520px) {
-  .quizOpts { flex-direction: row; gap: 10px; }
-  .quizOptLabel { padding: 6px 8px; font-size: 0.95rem; }
+.quizOptLabel {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
 }
 
-/* Videos list inside event dropdown */
-.eventVideos ul { list-style: none; padding-left: 0; }
-.eventVideos li { background: #fafafa; padding: 8px; border-radius: 6px; border: 1px solid #eee; }
-.videoDesc { color: #444; font-size: 0.95rem; margin-top: 6px; }
-.videoPlayLink { background: none; border: none; color: #0a58ca; cursor: pointer; padding: 0; font-size: 1rem; text-decoration: underline; }
+.quizOptLabel input {
+  margin-right: 10px;
+}
 
-/* Video modal */
+.quizActions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.authButton {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.authButton:hover {
+  background-color: #0056b3;
+}
+
+.authButton:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+/* Video Modal */
 .videoOverlay {
   position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.6);
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.8);
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 2100;
+  z-index: 1000;
 }
+
 .videoCard {
-  background: #000;
-  color: white;
-  padding: 12px;
-  max-width: 900px;
-  width: 95%;
-  border-radius: 10px;
-  box-shadow: 0 10px 40px rgba(0,0,0,0.4);
-  max-height: 90vh;
-  display: flex;
-  flex-direction: column;
+  background-color: white;
+  border-radius: 8px;
+  padding: 20px;
+  max-width: 800px;
+  width: 90%;
+  max-height: 80vh;
 }
-.videoFrameWrap { position: relative; padding-top: 56.25%; width: 100%; }
-.videoFrameWrap iframe, .videoFrameWrap video { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
-.videoHeader { display:flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-.videoCloseBtn { background: #fff; color: #111; border-radius: 8px; padding: 6px 10px; border: none; cursor: pointer; font-weight: 700; }
 
-/* Characters list - reuse video styles */
-.eventCharacters ul { list-style: none; padding-left: 0; }
-.eventCharacters li { background: #fafafa; padding: 8px; border-radius: 6px; border: 1px solid #eee; }
-.eventCharacters a { color: #0a58ca; text-decoration: underline; }
+.videoHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
 
-/* Footer grouping and pager */
-.eventFooter { margin-top: 10px; }
-.footerActions { display:flex; justify-content:space-between; align-items:center; gap:12px; }
-.actionGroup { display:flex; align-items:center; gap:8px; }
-.scoreBox { font-weight:700; color:#111; margin-left:8px; }
-.footerNav { display:flex; gap:8px; }
-.navBtn { background:#fff; border:1px solid #ddd; padding:6px 10px; border-radius:6px; cursor:pointer; }
-.navBtn:disabled { opacity:0.5; cursor:default; }
+.videoCloseBtn {
+  background: none;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+  color: #666;
+}
 
-/* description pager */
-.eventDescription { background: #fff; padding: 10px; border-radius: 8px; max-height: 240px; overflow: hidden; }
-.descPageContent { white-space: pre-wrap; color:#222; max-height:200px; overflow:auto; padding-right:8px; }
-.descPager { display:flex; justify-content:center; align-items:center; gap:8px; margin-top:8px; }
-.pagerBtn { background:#fff; border:1px solid #ddd; padding:6px 10px; border-radius:6px; cursor:pointer; }
-.pagerInfo { font-size:0.9rem; color:#333; }
+.videoFrameWrap {
+  position: relative;
+  padding-bottom: 56.25%; /* 16:9 aspect ratio */
+  height: 0;
+  overflow: hidden;
+}
+
+.videoFrameWrap iframe,
+.videoFrameWrap video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .courseDetailGrid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .leftColumn,
+  .rightColumn {
+    order: 2;
+  }
+
+  .middleColumn {
+    order: 1;
+  }
+}
