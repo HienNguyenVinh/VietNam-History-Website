@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import './CourseDetail.css';
 import { getToken } from '../../utils/auth';
-import { getFirstTwoSentences } from '../../utils/getFirstTwoSentences';
 
 export default function CourseDetail() {
   const { id } = useParams();
@@ -191,7 +190,24 @@ export default function CourseDetail() {
         ) : (
           <div className="middleInner">
             <h3 className="selectedTitle">{selectedEvent.title || selectedEvent.name}</h3>
-            <div className="descriptionScroll"><div className="descFull">{selectedEvent.description}</div></div>
+            <div className="descriptionScroll">
+              <div className="descFull">
+                {selectedEvent.image && (
+                  <img
+                    src={selectedEvent.image}
+                    alt={selectedEvent.name}
+                    style={{
+                      float: 'left',
+                      marginRight: '10px',                      
+                      width: '200px',
+                      height: 'auto',
+                      borderRadius: '5px'
+                    }}
+                  />
+                )}
+                {selectedEvent.description}
+              </div>
+            </div>
             <div className="middleFooter">
               <button className="authSmallButton" onClick={() => openQuiz(selectedEvent)}>Kiểm tra</button>
               <div className="scoreBox">{eventScores[selectedEvent.id] != null ? `Điểm: ${eventScores[selectedEvent.id]}%` : 'Điểm: -'}</div>

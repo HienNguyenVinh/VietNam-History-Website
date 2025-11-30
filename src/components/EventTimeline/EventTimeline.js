@@ -94,7 +94,22 @@ const EventTimeline = ({ events, timelineIndex, selectedEvent, onPrevEvents, onN
             <button onClick={onCloseEventDetail} className={styles.closeButton}>×</button>
             <h2>{selectedEvent.name}</h2>
             <p><strong>Năm:</strong> { `${selectedEvent.start} - ${selectedEvent.end}`}</p>
-            <p>{selectedEvent.description}</p>
+            <p>
+              {selectedEvent.image && (
+                <img
+                  src={selectedEvent.image}
+                  alt={selectedEvent.name}
+                  style={{
+                    float: 'left',
+                    marginRight: '10px',
+                    width: '200px',
+                    height: 'auto',
+                    borderRadius: '5px'
+                  }}
+                />
+              )}
+              {selectedEvent.description}
+            </p>
           </div>
         </div>
       )}      

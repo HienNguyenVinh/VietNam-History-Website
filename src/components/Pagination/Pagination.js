@@ -5,11 +5,11 @@ const Pagination = ({ currentPage, totalPages, onPrevPage, onNextPage }) => {
   return (
     <div className={styles.pagination}>
       <button onClick={onPrevPage} disabled={currentPage === 1}>
-        Previous
+        Trước
       </button>
-      <span >Page {currentPage} of {totalPages}</span>
+      <span >Trang {currentPage} trên {totalPages}</span>
       <button onClick={onNextPage} disabled={currentPage === totalPages}>
-        Next
+        Sau
       </button>
     </div>
   );
