@@ -1,7 +1,7 @@
 // src/components/Chat/ChatInput.jsx
 import React, { useState } from 'react';
 
-export default function ChatInput({ onSend }) {
+export default function ChatInput({ onSend, disabled = false }) {
   const [text, setText] = useState('');
   const [sending, setSending] = useState(false);
 
@@ -25,16 +25,17 @@ export default function ChatInput({ onSend }) {
   };
 
   return (
-    <div className="chatInput">
+    <div className="chatInputBar">
       <textarea
         value={text}
         onChange={(e) => setText(e.target.value)}
         onKeyDown={onKeyDown}
+        placeholder="Gõ câu hỏi..."
         rows={2}
-        placeholder="Gõ câu hỏi... (Enter để gửi, Shift+Enter xuống dòng)"
+        disabled={disabled}
       />
-      <div className="chatInputActions">
-        <button onClick={handleSend} disabled={sending || !text.trim()}>
+      <div className="inputActions">
+        <button type="button" onClick={handleSend} disabled={sending || !text.trim()}>
           {sending ? 'Đang gửi...' : 'Gửi'}
         </button>
       </div>

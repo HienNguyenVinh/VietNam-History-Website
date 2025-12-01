@@ -11,15 +11,15 @@ const port = 3001; // Use a different port than React's default 3000
 app.use(cors());
 app.use(express.json());
 
-const JWT_SECRET = process.env.JWT_SECRET || 'dev_jwt_secret_change_me';
+const JWT_SECRET = process.env.JWT_SECRET;
 
 // PostgreSQL connection configuration
 const pool = new Pool({
   host: 'localhost',
-  port: 5555,
-  database: 'lichsu',
+  port: 5432,
+  database: 'web_lichsu_db_v1',
   user: 'postgres',
-  password: '123456',
+  password: 'hien1972003',
 });
 
 // Test database connection
