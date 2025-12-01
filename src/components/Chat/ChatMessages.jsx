@@ -1,34 +1,42 @@
 // src/components/Chat/ChatMessages.jsx
 import React, { useEffect, useRef } from 'react';
 
-function MessageItem({ msg }) {
-  const className = msg.sender === 'user' ? 'msg user' : (msg.sender === 'assistant' ? 'msg assistant' : 'msg system');
-  return (
-    <div className={className}>
-      <div className="msgInner">
-        <div className="msgText">{msg.text}</div>
-        {msg.streaming && <div className="streamingIndicator">●</div>}
-      </div>
-    </div>
-  );
-}
+export default function ChatMessages({ messages, waitingFirstChunk }) {
+  const ref = useRef(null);
 
-export default function ChatMessages({ messages }) {
-  const listRef = useRef(null);
-
-  // auto-scroll to bottom when messages change
   useEffect(() => {
-    const el = listRef.current;
+    const el = ref.current;
     if (!el) return;
     el.scrollTop = el.scrollHeight;
-  }, [messages]);
+  }, [messages, waitingFirstChunk]);
 
   return (
-    <div className="chatMessages" ref={listRef}>
+    <div className="chatMessagesPane" ref={ref}>
+      {messages.length === 0 && <div className="emptyHint">Bắt đầu bằng cách gửi câu hỏi...</div>}
+
       {messages.map((m) => (
-        <MessageItem key={m.id} msg={m} />
+        <div key={m.id} className={`chatMsg ${m.role === 'user' ? 'user' : (m.role === 'assistant' ? 'assistant' : 'system')}`}>
+          <div className="msgBubble">
+            {m.role === 'assistant' && (m.streaming || false) ? (
+              <>
+                <div className="assistantContent">{m.content}</div>
+                <div className="streamingDots">◌</div>
+              </>
+            ) : (
+              <div className="content">{m.content}</div>
+            )}
+          </div>
+        </div>
       ))}
-      {messages.length === 0 && <div className="emptyHint">Bắt đầu bằng cách gửi một câu hỏi về lịch sử.</div>}
+
+      {/* Khi đang gọi /chat/stream và chưa có chunk đầu tiên */}
+      {waitingFirstChunk && (
+        <div className="chatMsg assistant placeholder">
+          <div className="msgBubble">
+            <em className="faint">đang tìm kiếm thông tin…</em>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
