@@ -140,3 +140,34 @@
   color: white;
   cursor: pointer;
 }
+
+.assistantContent p {
+  margin: 6px 0;
+  line-height: 1.45;
+}
+
+.assistantContent ul,
+.assistantContent ol {
+  margin-left: 20px;
+  margin-bottom: 6px;
+}
+
+.assistantContent table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 6px 0;
+}
+
+.assistantContent th,
+.assistantContent td {
+  border: 1px solid #ddd;
+  padding: 6px 8px;
+  text-align: left;
+}
+
+.streamingDots {
+  display: inline-block;
+  margin-left: 8px;
+  color: #ff6b6b;
+  font-weight: bold;
+}
