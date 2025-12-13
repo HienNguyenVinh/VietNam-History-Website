@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { saveAuth } from '../../utils/auth';
 
-export default function Register() {
+export default function Register({setUser}) {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -37,7 +37,8 @@ export default function Register() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Registration failed');
       saveAuth(data.token, data.user);
-      navigate('/login');
+      setUser(data.user);
+      navigate('/');
     } catch (err) {
       setError(err.message);
     }

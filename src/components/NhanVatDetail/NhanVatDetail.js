@@ -10,7 +10,7 @@ const NhanVatDetail = () => {
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
 
-  const selectedNhanVat = fullNhanVat.find(nv => nv.id === String(id));
+  const selectedNhanVat = fullNhanVat.find(nv => nv.id == id);
 
   if (!selectedNhanVat) return <div>Nhan Vat not found</div>;
 

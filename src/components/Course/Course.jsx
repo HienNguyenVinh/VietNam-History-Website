@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import './Course.css';
 import { getToken } from '../../utils/auth';
+import { jwtDecode } from 'jwt-decode';
 
 export default function Course() {
   const [courses, setCourses] = useState([]);
@@ -15,10 +16,13 @@ export default function Course() {
       setError(null);
       // require login to view courses
       const token = getToken();
-      if (!token) {
+      const { exp } = jwtDecode(token); // exp is in seconds
+      const now = Date.now() / 1000;
+      if (!token || exp < now) {
         navigate('/login');
         return;
       }
+
       try {
         const res = await fetch('http://localhost:3001/api/courses');
         const data = await res.json();

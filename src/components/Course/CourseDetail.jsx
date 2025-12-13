@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import './CourseDetail.css';
 import { getToken } from '../../utils/auth';
-
+import {jwtDecode} from 'jwt-decode';
 export default function CourseDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -25,6 +25,9 @@ export default function CourseDetail() {
 
   const [showVideoModal, setShowVideoModal] = useState(false);
   const [selectedVideo, setSelectedVideo] = useState(null);
+
+  const [timeLeft, setTimeLeft] = useState(0);
+  const [timerId, setTimerId] = useState(null);
 
   const getEmbedSrc = (link) => {
     if (!link) return null;
@@ -57,7 +60,9 @@ export default function CourseDetail() {
   // Load course and events
   useEffect(() => {
     const token = getToken();
-    if (!token) {
+    const { exp } = jwtDecode(token); // exp is in seconds
+          const now = Date.now() / 1000;
+    if (!token || exp < now) {
       navigate('/login');
       return;
     }
@@ -125,11 +130,29 @@ export default function CourseDetail() {
     })();
   }, [selectedEvent]);
 
+  useEffect(() => {
+    if (modalOpen && timeLeft > 0) {
+      const id = setInterval(() => {
+        setTimeLeft(prev => prev - 1);
+      }, 1000);
+      setTimerId(id);
+    } else if (timeLeft === 0 && modalOpen) {
+      handleSubmit();
+    }
+    return () => {
+      if (timerId) {
+        clearInterval(timerId);
+        setTimerId(null);
+      }
+    };
+  }, [modalOpen, timeLeft]);
+
   const openQuiz = async (ev) => {
     setModalEvent(ev);
     setModalOpen(true);
     setQuestions([]);
     setAnswers({});
+    setTimeLeft(60);
     try {
       const res = await fetch(`http://localhost:3001/api/events/${ev.id}/questions`);
       const data = await res.json();
@@ -137,8 +160,7 @@ export default function CourseDetail() {
     } catch (e) { setQuestions([]); }
   };
 
-  const submitQuiz = async (e) => {
-    e.preventDefault();
+  const handleSubmit = async () => {
     if (!modalEvent) return;
     const total = questions.length;
     if (total === 0) return;
@@ -161,8 +183,14 @@ export default function CourseDetail() {
       if (!res.ok) throw new Error(data.error || 'Failed');
       setEventScores(prev => ({ ...prev, [modalEvent.id]: score }));
       setModalOpen(false); setQuestions([]); setAnswers({});
+      if (timerId) { clearInterval(timerId); setTimerId(null); }
     } catch (err) { alert(err.message || 'Lỗi khi nộp bài'); }
     finally { setSubmitting(false); }
+  };
+
+  const submitQuiz = async (e) => {
+    e.preventDefault();
+    handleSubmit();
   };
 
   const openVideoModal = (v) => { setSelectedVideo(v); setShowVideoModal(true); };
@@ -191,7 +219,7 @@ export default function CourseDetail() {
           <div className="middleInner">
             <h3 className="selectedTitle">{selectedEvent.title || selectedEvent.name}</h3>
             <div className="descriptionScroll">
-              <div className="descFull">
+              <div className="descFull" style={{ whiteSpace: 'pre-line' }}>
                 {selectedEvent.image && (
                   <img
                     src={selectedEvent.image}
@@ -205,7 +233,7 @@ export default function CourseDetail() {
                     }}
                   />
                 )}
-                {selectedEvent.description}
+                {selectedEvent.description.replace(/\n{2,}/g, '\n')}
               </div>
             </div>
             <div className="middleFooter">
@@ -247,6 +275,9 @@ export default function CourseDetail() {
         <div className="quizOverlay">
           <div className="quizCard">
             <h3>Kiểm tra: {modalEvent.title || modalEvent.name || modalEvent.id}</h3>
+            <div style={{ textAlign: 'center', fontSize: '18px', fontWeight: 'bold', color: timeLeft < 60 ? 'red' : 'black' }}>
+              Thời gian còn lại: {Math.floor(timeLeft / 60)}:{String(timeLeft % 60).padStart(2, '0')}
+            </div>
             {questions.length === 0 && <div>Không có câu hỏi.</div>}
             <form onSubmit={submitQuiz} className="quizForm">
               {questions.map((q, i) => (
@@ -265,7 +296,7 @@ export default function CourseDetail() {
                 </div>
               ))}
               <div className="quizActions">
-                <button type="button" className="authSmallButton" onClick={() => { setModalOpen(false); setQuestions([]); setAnswers({}); }}>Hủy</button>
+                <button type="button" className="authSmallButton" onClick={() => { setModalOpen(false); setQuestions([]); setAnswers({}); if (timerId) { clearInterval(timerId); setTimerId(null); } }}>Hủy</button>
                 <button type="submit" className="authButton" disabled={submitting}>{submitting ? 'Đang gửi...' : 'Nộp'}</button>
               </div>
             </form>

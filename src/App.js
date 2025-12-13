@@ -19,9 +19,9 @@ import CourseDetail from './components/Course/CourseDetail';
 import { useNavigate } from 'react-router-dom';
 import Login from './components/Auth/Login';
 import Register from './components/Auth/Register';
-import { getUser, logout } from './utils/auth';
+import { getUser, logout,getToken } from './utils/auth';
 import { useState, useEffect } from 'react';
-
+import {jwtDecode} from 'jwt-decode';
 function App() {
   const location = useLocation();
   const videosHook = useVideos();
@@ -30,10 +30,16 @@ function App() {
   const fullNhanVat = nhanVatHook.fullNhanVat;
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
-
+  const token = getToken();
   useEffect(() => {
     setUser(getUser());
   }, []);
+  useEffect(() => {
+    if (token) {
+      const {exp} = jwtDecode(token);
+      if (exp < Date.now() / 1000){ logout();setUser(null);}
+    }
+  }, [token]);
 
   const handleLogout = () => {
     logout();
@@ -113,7 +119,7 @@ function App() {
           } />
           <Route path="/chat" element={<ChatPage />} />
           <Route path="/login" element={<Login setUser={setUser} />} />
-          <Route path="/register" element={<Register />} />
+          <Route path="/register" element={<Register setUser={setUser} />} />
           <Route path="/nhan-vat" element={
             <>
               <div className="nhanVatHeader">

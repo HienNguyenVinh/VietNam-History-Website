@@ -11,15 +11,15 @@ const port = 3001; // Use a different port than React's default 3000
 app.use(cors());
 app.use(express.json());
 
-const JWT_SECRET = process.env.JWT_SECRET;
+const JWT_SECRET = process.env.JWT_SECRET||'dev_jwt_secret_change_me';
 
 // PostgreSQL connection configuration
 const pool = new Pool({
   host: 'localhost',
-  port: 5432,
-  database: 'web_lichsu_db_v1',
+  port: 5555,
+  database: 'lichsu',
   user: 'postgres',
-  password: 'hien1972003',
+  password: '123456',
 });
 
 // Test database connection
@@ -92,13 +92,13 @@ ensureUsersTable();
 app.post('/api/register', async (req, res) => {
   const { name, email, password } = req.body;
   if (!name || !email || !password) {
-    return res.status(400).json({ error: 'Name, email and password are required' });
+    return res.status(400).json({ error: 'Email và mật khẩu là bắt buộc' });
   }
 
   try {
     const existing = await pool.query('SELECT id FROM users WHERE email = $1', [email]);
     if (existing.rows.length > 0) {
-      return res.status(400).json({ error: 'Email already registered' });
+      return res.status(400).json({ error: 'Email đã được sử dụng' });
     }
 
     const password_hash = await bcrypt.hash(password, 10);
@@ -136,7 +136,7 @@ app.post('/api/login', async (req, res) => {
       return res.status(400).json({ error: 'Sai email hoặc mật khẩu' });
     }
 
-    const token = jwt.sign({ id: user.id, email: user.email }, JWT_SECRET, { expiresIn: '7d' });
+    const token = jwt.sign({ id: user.id, email: user.email }, JWT_SECRET, { expiresIn: '1h' });
     delete user.password_hash;
     res.json({ user: { id: user.id, name: user.name, email: user.email }, token });
   } catch (err) {
@@ -214,7 +214,7 @@ app.get('/api/events/:id/questions', async (req, res) => {
 
 // Videos for an event
 app.get('/api/events/:id/videos', async (req, res) => {
-  const eventId = String(req.params.id);
+  const eventId =req.params.id;
   try {
     const result = await pool.query('SELECT id, name, description, link, category, eventid FROM video WHERE eventid = $1', [eventId]);
     res.json(result.rows);
@@ -226,7 +226,7 @@ app.get('/api/events/:id/videos', async (req, res) => {
 
 // Characters for an event (join nhan_vat_events -> nhan_vat)
 app.get('/api/events/:id/characters', async (req, res) => {
-  const eventId = String(req.params.id);
+  const eventId = req.params.id;
   try {
     const result = await pool.query(
       `SELECT nv.* FROM nhan_vat_events nve
