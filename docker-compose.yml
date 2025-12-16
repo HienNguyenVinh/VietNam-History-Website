@@ -1,0 +1,25 @@
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/app
+      - /app/node_modules
+    environment:
+      - REACT_APP_API_URL=http://localhost:3001
+
+  backend:
+    build: .
+    ports:
+      - "3001:3001"
+    environment:
+      - PORT=3001
+      - DB_HOST=host.docker.internal
+      - DB_PORT=5555
+      - DB_NAME=lichsu
+      - DB_USER=postgres
+      - DB_PASSWORD=123456
+      - JWT_SECRET=dev_jwt_secret_change_me

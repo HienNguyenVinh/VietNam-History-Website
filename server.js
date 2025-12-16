@@ -5,21 +5,22 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
 const app = express();
-const port = 3001; // Use a different port than React's default 3000
+const port = process.env.PORT || 3001; // Use a different port than React's default 3000
 
 // Enable CORS for all routes
 app.use(cors());
 app.use(express.json());
 
-const JWT_SECRET = process.env.JWT_SECRET||'dev_jwt_secret_change_me';
+
+const JWT_SECRET = process.env.JWT_SECRET || 'dev_jwt_secret_change_me';
 
 // PostgreSQL connection configuration
 const pool = new Pool({
-  host: 'localhost',
-  port: 5555,
-  database: 'lichsu',
-  user: 'postgres',
-  password: '123456',
+  host: process.env.DB_HOST || 'localhost',
+  port: process.env.DB_PORT || 5555,
+  database: process.env.DB_NAME || 'lichsu',
+  user: process.env.DB_USER || 'postgres',
+  password: process.env.DB_PASSWORD || '123456',
 });
 
 // Test database connection
@@ -64,6 +65,7 @@ app.get('/api/nhan_vat', async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 });
+
 
 // Start the server
 app.listen(port, () => {
