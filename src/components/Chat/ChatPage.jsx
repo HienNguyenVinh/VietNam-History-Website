@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useThreads } from '../../hooks/useThreads';
+import { useNavigate } from 'react-router-dom';
 import { getUser, getToken } from '../../utils/auth';
 import './Chat.css';
 import ChatMessages from './ChatMessages';
@@ -53,6 +54,7 @@ export default function ChatPage() {
   const [streaming, setStreaming] = useState(false);
   const [waitingFirstChunk, setWaitingFirstChunk] = useState(false);
   const controllerRef = useRef(null);
+  const navigate = useNavigate();
 
   const [selectedSourceIds, setSelectedSourceIds] = useState([]);
 
