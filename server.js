@@ -150,7 +150,13 @@ app.post('/api/login', async (req, res) => {
 // Courses endpoint
 app.get('/api/courses', async (req, res) => {
   try {
-    const result = await pool.query('SELECT * FROM course');
+    const result = await pool.query(`SELECT * FROM course ORDER BY
+CASE 
+  WHEN id = 1 THEN 11.1
+  WHEN id = 2 THEN 13.1
+  WHEN id = 3 THEN 26.1
+  ELSE id
+END ASC`);
     res.json(result.rows);
   } catch (err) {
     console.error('Error fetching courses:', err);
@@ -162,7 +168,7 @@ app.get('/api/courses', async (req, res) => {
 app.get('/api/courses/:id/events', async (req, res) => {
   const courseId = req.params.id;
   try {
-    const result = await pool.query('SELECT * FROM events WHERE courseid = $1 ORDER BY start ASC', [courseId]);
+    const result = await pool.query("SELECT * FROM events WHERE courseid = $1 ORDER BY CASE WHEN start LIKE '%TCN%' THEN -CAST(NULLIF(REGEXP_REPLACE(REPLACE(start,'TCN',''),'[^0-9]','','g'),'') AS INTEGER) WHEN start ~ '^[0-9]+$' THEN CAST(REGEXP_REPLACE(start,'^0+','') AS INTEGER) ELSE NULL END ASC", [courseId]);
     res.json(result.rows);
   } catch (err) {
     console.error('Error fetching events for course', courseId, err);

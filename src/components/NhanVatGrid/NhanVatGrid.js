@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import styles from './NhanVatGrid.module.css';
-import {getFirstTwoSentences} from '../../utils/getFirstTwoSentences';
+import {getFirst50Words} from '../../utils/getFirst50Words';
 const NhanVatGrid = ({ nhanVat }) => {
   return (
     <div className={styles.nhanVatGrid}>
@@ -9,7 +9,7 @@ const NhanVatGrid = ({ nhanVat }) => {
         <Link key={nv.id} to={`/nhan-vat/${nv.id}`} className={styles.nhanVatItem}>
           <h3>{nv.name}</h3>
           <h5>{nv.birth_year} - {nv.death_year}</h5>
-          <p>{getFirstTwoSentences(nv.description)}</p>
+          <p>{getFirst50Words(nv.description)}</p>
         </Link>
       ))}
     </div>

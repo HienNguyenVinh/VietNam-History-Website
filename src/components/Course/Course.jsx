@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import './Course.css';
 import { getToken } from '../../utils/auth';
 import { jwtDecode } from 'jwt-decode';
-
+import { getFirst50Words } from '../../utils/getFirst50Words';
 export default function Course() {
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -64,7 +64,7 @@ export default function Course() {
         {courses.map(c => (
           <div key={c.id} className="courseCard">
             <h3>{c.title || c.name || `Khóa ${c.id}`}</h3>
-            {c.description && <p>{c.description}</p>}
+            {c.description && <p>{getFirst50Words(c.description)}</p>}
             {/* Progress bar (if available) */}
             {progressMap[c.id] ? (
               <div className="courseProgress">

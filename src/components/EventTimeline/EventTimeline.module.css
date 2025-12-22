@@ -248,7 +248,15 @@
   color: #666;
   line-height: 1.6;
 }
-
+.authSmallButton {
+  background: white;
+  color: #333;
+  border: 1px solid rgba(0,0,0,0.08);
+  padding: 0.35rem 0.6rem;
+  border-radius: 14px;
+  font-size: 0.9rem;
+  text-decoration: none;
+}
 /* --- Responsive adjustments --- */
 @media (max-width: 1024px) {
   .timelineArrow {
