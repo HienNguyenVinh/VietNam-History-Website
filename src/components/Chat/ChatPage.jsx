@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useThreads } from '../../hooks/useThreads';
+import { useNavigate } from 'react-router-dom';
 import { getUser, getToken } from '../../utils/auth';
 import './Chat.css';
 import ChatMessages from './ChatMessages';
@@ -42,9 +43,10 @@ function extractUserId(user) {
 export default function ChatPage() {
   const authUser = getUser();
   const token = getToken();
-  const defaultUserId = extractUserId(authUser) || localStorage.getItem('userId') || 'demo-user';
+  const actualUserId = extractUserId(authUser) || localStorage.getItem('userId') || 'demo-user';
+  const isLoggedIn = Boolean(extractUserId(authUser) || localStorage.getItem('userId') || token);
 
-  const threadsHook = useThreads({ userId: defaultUserId });
+  const threadsHook = useThreads({ userId: actualUserId });
   const { threads, loading: threadsLoading, createThread, deleteThread, userId } = threadsHook;
 
   const [selectedThreadId, setSelectedThreadId] = useState(null);
@@ -52,8 +54,11 @@ export default function ChatPage() {
   const [streaming, setStreaming] = useState(false);
   const [waitingFirstChunk, setWaitingFirstChunk] = useState(false);
   const controllerRef = useRef(null);
+  const navigate = useNavigate();
 
   const [selectedSourceIds, setSelectedSourceIds] = useState([]);
+
+  const [showLoginPrompt, setShowLoginPrompt] = useState(false);
 
   const handleToggleSource = (id) => {
     setSelectedSourceIds(prev => {
@@ -97,6 +102,10 @@ export default function ChatPage() {
   }, [selectedThreadId, userId, token]);
 
   const handleNewThread = async () => {
+    if (!isLoggedIn) {
+      setShowLoginPrompt(true);
+      return;
+    }
     const newId = await createThread();
     if (newId) setSelectedThreadId(newId);
   };
@@ -111,6 +120,10 @@ export default function ChatPage() {
 
   const sendMessage = async (text) => {
     const FRIENDLY_ERROR = "Xin lỗi bạn, hệ thống đang có chút trục trặc :( Bạn hãy quay lại sau nhé!";
+    if (!isLoggedIn) {
+      setShowLoginPrompt(true);
+      return;
+    }
 
     if (!selectedThreadId) {
       const newId = await createThread();
@@ -136,6 +149,8 @@ export default function ChatPage() {
     setMessages((s) => [...s, { id: assistantId, role: 'assistant', content: '', streaming: true }]);
 
     const sourceList = selectedSourceIds.map(id => TAP_MAP[id]);
+
+    let streamHadError = false;
 
     try {
       const headers = { 'Content-Type': 'application/json' };
@@ -172,36 +187,37 @@ export default function ChatPage() {
         buf = parts.pop();
 
         for (const part of parts) {
-            if (!part.trim()) continue;
-            const lines = part.split('\n').map(l => l.trim()).filter(Boolean);
-            for (const line of lines) {
-                if (line.startsWith('data:')) {
-                    const jsonStr = line.slice(5).trim();
-                    try {
-                        const payload = JSON.parse(jsonStr);
-                        if (payload.error) {
-                             setMessages((prev) => prev.map(m => m.id === assistantId ? { ...m, content: FRIENDLY_ERROR, streaming: false } : m));
-                             gotAnyChunk = true;
-                             continue;
-                        }
-                        if (Object.prototype.hasOwnProperty.call(payload, 'context')) {
-                             if (payload.context && String(payload.context).length > 0) {
-                                  setMessages((prev) => prev.map(m => m.id === assistantId ? { ...m, content: (m.content || '') + payload.context, streaming: true } : m));
-                                  gotAnyChunk = true;
-                             }
-                             continue;
-                        }
-                        setMessages((prev) => [...prev, { id: `sys-${Date.now()}`, role: 'system', content: JSON.stringify(payload) }]);
-                    } catch (err) {
-                        setMessages((prev) => prev.map(m => m.id === assistantId ? { ...m, content: (m.content || '') + jsonStr, streaming: true } : m));
-                        gotAnyChunk = true;
-                    }
+          if (!part.trim()) continue;
+          const lines = part.split('\n').map(l => l.trim()).filter(Boolean);
+          for (const line of lines) {
+            if (line.startsWith('data:')) {
+              const jsonStr = line.slice(5).trim();
+              try {
+                const payload = JSON.parse(jsonStr);
+                if (payload.error) {
+                  streamHadError = true;
+                  setMessages((prev) => prev.map(m => m.id === assistantId ? { ...m, content: FRIENDLY_ERROR, streaming: false } : m));
+                  gotAnyChunk = true;
+                  continue;
                 }
+                if (Object.prototype.hasOwnProperty.call(payload, 'context')) {
+                  if (payload.context && String(payload.context).length > 0) {
+                    setMessages((prev) => prev.map(m => m.id === assistantId ? { ...m, content: (m.content || '') + payload.context, streaming: true } : m));
+                    gotAnyChunk = true;
+                  }
+                  continue;
+                }
+                setMessages((prev) => [...prev, { id: `sys-${Date.now()}`, role: 'system', content: JSON.stringify(payload) }]);
+              } catch (err) {
+                setMessages((prev) => prev.map(m => m.id === assistantId ? { ...m, content: (m.content || '') + jsonStr, streaming: true } : m));
+                gotAnyChunk = true;
+              }
             }
+          }
         }
         if (gotAnyChunk && waitingFirstChunk) setWaitingFirstChunk(false);
       }
-      
+
       setMessages((prev) => {
         const found = prev.find(m => m.id === assistantId);
         if (!found) return prev;
@@ -214,19 +230,21 @@ export default function ChatPage() {
       setWaitingFirstChunk(false);
       controllerRef.current = null;
 
-      try {
-        const headers2 = token ? { Authorization: `Bearer ${token}` } : {};
-        const reload = await fetch(`${API_PREFIX}/threads/${encodeURIComponent(selectedThreadId)}?user_id=${encodeURIComponent(userId)}`, { headers: headers2 });
-        if (reload.ok) {
-          const body = await reload.json();
-          const formatted = (body.messages || []).map((m, idx) => ({
-            id: m.id ?? `${m.role}-${idx}`,
-            role: m.role || (m.sender || 'user'),
-            content: m.content ?? m.text ?? '',
-          }));
-          setMessages(formatted);
-        }
-      } catch (e) {}
+      if (!streamHadError) {
+        try {
+          const headers2 = token ? { Authorization: `Bearer ${token}` } : {};
+          const reload = await fetch(`${API_PREFIX}/threads/${encodeURIComponent(selectedThreadId)}?user_id=${encodeURIComponent(userId)}`, { headers: headers2 });
+          if (reload.ok) {
+            const body = await reload.json();
+            const formatted = (body.messages || []).map((m, idx) => ({
+              id: m.id ?? `${m.role}-${idx}`,
+              role: m.role || (m.sender || 'user'),
+              content: m.content ?? m.text ?? '',
+            }));
+            setMessages(formatted);
+          }
+        } catch (e) {}
+      }
 
     } catch (err) {
       if (err.name === 'AbortError') {
@@ -271,7 +289,6 @@ export default function ChatPage() {
         </div>
       </aside>
 
-      {/* CỘT GIỮA: CHAT CHÍNH */}
       <section className="chatMain">
         {!selectedThreadId ? (
           <div className="noThreadHint">Chọn đoạn chat bên trái hoặc tạo mới để bắt đầu đoạn chat mới!</div>
@@ -283,6 +300,20 @@ export default function ChatPage() {
                 {streaming ? <span className="streamingBadge">Streaming...</span> : <span className="muted">Idle</span>}
               </div>
             </div>
+
+            {showLoginPrompt && (
+              <div className="loginPrompt">
+                <div>
+                  <strong>Bạn cần đăng nhập</strong>
+                  <div>Vui lòng đăng nhập để bắt đầu đoạn chat.</div>
+                </div>
+                <div className="loginPromptActions">
+                  <button onClick={() => { navigate('/login')}}>Đăng nhập</button>
+                  <button onClick={() => setShowLoginPrompt(false)}>Đóng</button>
+                </div>
+              </div>
+            )}
+
             <ChatMessages messages={messages} waitingFirstChunk={waitingFirstChunk} />
             <ChatInput onSend={sendMessage} disabled={streaming && waitingFirstChunk === false && false} />
           </>

@@ -71,7 +71,7 @@ export default function ChatMessages({ messages, waitingFirstChunk }) {
       {waitingFirstChunk && (
         <div className="chatMsg assistant placeholder">
           <div className="msgBubble">
-            <em className="faint">đang tìm kiếm thông tin…</em>
+            <em className="faint">Đang tìm kiếm thông tin…</em>
           </div>
         </div>
       )}
