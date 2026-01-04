@@ -11,8 +11,7 @@ import Pagination from './components/Pagination/Pagination';
 import YearRangeFilter from './components/YearRangeFilter/YearRangeFilter';
 import TitleFilter from './components/TitleFilter/TitleFilter';
 import { useVideos } from './hooks/useVideos';
-import { useEvents } from './hooks/useEvents';
-import { useCourses } from './hooks/useCourses';
+import { useTimeline } from './hooks/useTimeline';
 import { useNhanVat } from './hooks/useNhanVat';
 import ChatPage from './components/Chat/ChatPage';
 import Course from './components/Course/Course';
@@ -26,23 +25,12 @@ import {jwtDecode} from 'jwt-decode';
 function App() {
   const location = useLocation();
   const videosHook = useVideos();
-  const eventsHook = useEvents();
-  const coursesHook = useCourses();
   const nhanVatHook = useNhanVat();
-  const fullNhanVat = nhanVatHook.fullNhanVat;
+  const timelineHook = useTimeline();
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
   const token = getToken();
-  const [mode, setMode] = useState('courses');
-  const [items, setItems] = useState([]);
-  const [selectedCourseId, setSelectedCourseId] = useState(null);
-  const [timelineIndex, setTimelineIndex] = useState(0);
-  const [selectedEvent, setSelectedEvent] = useState(null);
-  useEffect(() => {
-    if (mode === 'courses') {
-      setItems(coursesHook.courses);
-    }
-  }, [coursesHook.courses, mode]);
+
   useEffect(() => {
     setUser(getUser());
   }, []);
@@ -59,49 +47,8 @@ function App() {
     navigate('/');
   };
 
-  const onSwitchToEvents = async (courseId) => {
-    try {
-      const response = await fetch(`http://localhost:3001/api/courses/${courseId}/events`);
-      if (!response.ok) throw new Error('Failed to fetch events');
-      const events = await response.json();
-      setItems(events);
-      setMode('events');
-      setSelectedEvent(null);
-      setTimelineIndex(0);
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  const onBackToCourses = () => {
-    setMode('courses');
-    setItems(coursesHook.courses);
-    setSelectedCourseId(null);
-    setTimelineIndex(0);
-  };
-
-  const onPrevEvents = () => {
-    if (timelineIndex > 0) {
-      setTimelineIndex(timelineIndex - 1);
-    }
-  };
-
-  const onNextEvents = () => {
-    if (timelineIndex < items.length - 1) {
-      setTimelineIndex(timelineIndex + 1);
-    }
-  };
-
-  const onSelectItem = (item) => {
-    setSelectedEvent(item);
-  };
-
-  const onCloseDetail = () => {
-    setSelectedEvent(null);
-  };
-
-  if (videosHook.loading || eventsHook.loading || nhanVatHook.loading || coursesHook.loading) return <div className="App">Loading...</div>;
-  if (videosHook.error || eventsHook.error || nhanVatHook.error || coursesHook.error) return <div className="App">Error: {videosHook.error || eventsHook.error || nhanVatHook.error || coursesHook.error}</div>;
+  if (videosHook.loading  || nhanVatHook.loading || timelineHook.loading) return <div className="App">Loading...</div>;
+  if (videosHook.error || nhanVatHook.error || timelineHook.error) return <div className="App">Error: {videosHook.error || nhanVatHook.error || timelineHook.error}</div>;
 
   return (
     <div className="App">
@@ -135,18 +82,18 @@ function App() {
           <Route path="/" element={
             <>
             <EventTimeline
-              items={items}
-              mode={mode}
-              timelineIndex={timelineIndex}
-              selectedItem={selectedEvent}
-              onPrev={onPrevEvents}
-              onNext={onNextEvents}
-              onSelectItem={onSelectItem}
-              onCloseDetail={onCloseDetail}
-              setTimelineIndex={setTimelineIndex}
-              onSwitchToEvents={onSwitchToEvents}
-              onBackToCourses={onBackToCourses}
-              selectedCourseId={selectedCourseId}
+              items={timelineHook.items}
+              mode={timelineHook.mode}
+              timelineIndex={timelineHook.timelineIndex}
+              selectedItem={timelineHook.selectedEvent}
+              onPrev={timelineHook.onPrevEvents}
+              onNext={timelineHook.onNextEvents}
+              onSelectItem={timelineHook.onSelectItem}
+              onCloseDetail={timelineHook.onCloseDetail}
+              setTimelineIndex={timelineHook.setTimelineIndex}
+              onSwitchToEvents={timelineHook.onSwitchToEvents}
+              onBackToCourses={timelineHook.onBackToCourses}
+              selectedCourseId={timelineHook.selectedCourseId}
             />
             <div className="learnsec">{user ? (<button onClick={()=>navigate('/course')}>Học ngay</button>) : (<span>Đăng nhập để học</span>)}</div></>
           } />
